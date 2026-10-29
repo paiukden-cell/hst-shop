@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HST Shop</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{
+  --bg:#0c0b10;--card:#16141d;--card2:#1d1a27;--text:#f2f0f7;--muted:#8d88a0;
+  --accent:#8b5cf6;--accent2:#c084fc;--line:#2a2638;--ok:#34d399;
+}
+:root[data-theme="light"]{
+  --bg:#f5f3fa;--card:#fff;--card2:#efecf7;--text:#17141f;--muted:#6b6780;--line:#e0dcec;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding-bottom:40px}
+header{position:sticky;top:0;z-index:10;background:var(--bg);padding:12px 16px 10px;border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.logo{font-weight:900;font-size:22px;letter-spacing:1px;font-style:italic}
+.logo b{color:var(--accent2)}
+.theme{background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:12px;width:36px;height:36px;font-size:17px}
+nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:1;white-space:nowrap;background:var(--card);border:1px solid var(--line);color:var(--muted);padding:9px 14px;border-radius:12px;font-size:12px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+nav button.on{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-color:transparent}
+main{padding:16px}
+section{display:none}
+section.on{display:block;animation:in .25s}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+.hero{text-align:center;padding:26px 16px 22px;background:var(--card);border:1px solid var(--line);border-radius:20px;margin-bottom:22px}
+.kicker{font-size:11px;letter-spacing:2px;color:var(--accent2);font-weight:700;text-transform:uppercase}
+.hero h1{margin:10px 0 8px;font-size:26px;line-height:1.1;font-weight:900;text-transform:uppercase}
+.hero p{margin:0;color:var(--muted);font-size:14px;line-height:1.45}
+h2{font-size:20px;text-transform:uppercase;margin:0 0 4px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+.prod{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;margin-bottom:16px}
+.prod img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block;background:#000}
+.pb{padding:14px 16px 16px}
+.pb h3{margin:0 0 4px;font-size:18px}
+.pb p{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.4}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.price{font-size:26px;font-weight:900}.price small{font-size:13px;color:var(--muted);font-weight:600;margin-left:3px}
+.btn{border:0;border-radius:14px;padding:13px 20px;font-weight:800;font-size:13px;letter-spacing:.6px;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+.btn.full{width:100%;display:block;text-align:center;text-decoration:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;margin-bottom:16px}
+.link{display:flex;align-items:center;justify-content:space-between;background:var(--card2);border-radius:14px;padding:14px 16px;margin-top:10px;color:var(--text);text-decoration:none}
+.link span{color:var(--muted);font-size:13px}
+ul.dots{list-style:none;padding:0;margin:14px 0;font-size:14px}
+ul.dots li{padding:6px 0 6px 20px;position:relative;color:var(--muted)}
+ul.dots li:before{content:"";position:absolute;left:0;top:13px;width:8px;height:8px;border-radius:50%;background:var(--accent2)}
+/* order sheet */
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;z-index:50}
+.sheet.on{display:flex}
+.panel{background:var(--bg);width:100%;border-radius:24px 24px 0 0;padding:20px 16px 28px;max-height:92vh;overflow:auto;animation:up .25s}
+@keyframes up{from{transform:translateY(40px);opacity:0}}
+.panel h3{margin:0 0 4px;font-size:20px}
+.sum{color:var(--muted);font-size:14px;margin-bottom:14px}
+label{display:block;font-size:12px;color:var(--muted);margin:12px 0 5px;font-weight:600}
+input,textarea{width:100%;background:var(--card);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:13px;font-size:16px;font-family:inherit}
+input:focus,textarea:focus{outline:2px solid var(--accent);border-color:transparent}
+.qty{display:flex;align-items:center;gap:14px}
+.qty button{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:20px}
+.qty b{min-width:24px;text-align:center;font-size:18px}
+.close{float:right;background:var(--card);border:1px solid var(--line);color:var(--text);width:34px;height:34px;border-radius:50%;font-size:16px}
+.done{text-align:center;padding:30px 10px}.done .ok{font-size:54px}
+.err{color:#f87171;font-size:13px;margin-top:10px;display:none}
+</style>
+</head>
+<body>
+<header>
+  <div class="top">
+    <div class="logo"><b>HST</b> SHOP</div>
+    <button class="theme" id="theme">☀</button>
+  </div>
+  <nav id="nav">
+    <button data-t="catalog" class="on">Каталог</button>
+    <button data-t="ads">Реклама</button>
+    <button data-t="tiktok">TikTok</button>
+  </nav>
+</header>
+<main>
+  <section id="catalog" class="on">
+    <div class="hero">
+      <div class="kicker">Hutory Stunt Team</div>
+      <h1>Мерч команди HST</h1>
+      <p>Таблички, брелки та стікерпаки. Відправляємо Новою Поштою по всій Україні.</p>
+    </div>
+    <h2>Каталог</h2>
+    <p class="sub">Обери товар і натисни «Замовити».</p>
+    <div id="list"></div>
+  </section>
+
+  <section id="ads">
+    <h2>Реклама</h2>
+    <p class="sub">Розмістимо вашу рекламу в нашому Telegram-каналі та TikTok.</p>
+    <div class="card">
+      <ul class="dots">
+        <li>Жива активна аудиторія</li>
+        <li>Пости в каналі та розсилка в боті</li>
+        <li>Інтеграції у відео</li>
+      </ul>
+      <a class="btn full" id="adBtn" href="#">Замовити рекламу</a>
+    </div>
+  </section>
+
+  <section id="tiktok">
+    <h2>TikTok</h2>
+    <p class="sub">Наші трюки та нові відео.</p>
+    <div class="card">
+      <a class="btn full" id="ttBtn" href="#">Відкрити TikTok</a>
+      <a class="link" id="mgr" href="#">Менеджер замовлень <span id="mgrName"></span></a>
+    </div>
+  </section>
+</main>
+
+<div class="sheet" id="sheet"><div class="panel" id="panel"></div></div>
+
+<script>
+const CFG = {
+  products: [
+    {id:"plate",   name:"Табличка HST",  price:400, img:"plate.jpg",    desc:"Номерна табличка команди HST."},
+    {id:"keychain",name:"Брелок HST",    price:100, img:"keychain.jpg", desc:"Брелок з логотипом HST."},
+    {id:"stickers",name:"Стікерпак HST", price:200, img:"stickers.jpg", desc:"Набір вінілових стікерів HST."}
+  ],
+  manager: "", tiktok: ""   // перезаписується з /config
+};
+const tg = window.Telegram && Telegram.WebApp;
+if (tg){ tg.ready(); tg.expand(); }
+const $ = s => document.querySelector(s);
+
+// theme
+try{ if(localStorage.getItem("th")==="light") document.documentElement.dataset.theme="light"; }catch(e){}
+$("#theme").onclick=()=>{
+  const l=document.documentElement.dataset.theme==="light";
+  if(l) delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme="light";
+  try{localStorage.setItem("th",l?"dark":"light")}catch(e){}
+};
+
+// tabs
+$("#nav").onclick=e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("on",x===b));
+  document.querySelectorAll("section").forEach(s=>s.classList.toggle("on",s.id===b.dataset.t));
+  scrollTo(0,0);
+};
+
+// catalog
+$("#list").innerHTML = CFG.products.map(p=>`
+  <div class="prod"><img src="${p.img}" alt="">
+  <div class="pb"><h3>${p.name}</h3><p>${p.desc}</p>
+  <div class="row"><div class="price">${p.price}<small>грн</small></div>
+  <button class="btn" data-id="${p.id}">Замовити →</button></div></div></div>`).join("");
+$("#list").onclick=e=>{const b=e.target.closest("button[data-id]"); if(b) openOrder(b.dataset.id)};
+
+// links from server config
+function open_(url){ if(!url) return; if(tg && url.includes("t.me")) tg.openTelegramLink(url); else if(tg) tg.openLink(url); else window.open(url,"_blank"); }
+fetch("config").then(r=>r.json()).then(c=>{
+  CFG.manager=c.manager||""; CFG.tiktok=c.tiktok||"";
+  $("#mgrName").textContent = CFG.manager?("@"+CFG.manager):"";
+}).catch(()=>{});
+$("#adBtn").onclick=e=>{e.preventDefault(); open_(CFG.manager?`https://t.me/${CFG.manager}`:"")};
+$("#mgr").onclick=e=>{e.preventDefault(); open_(CFG.manager?`https://t.me/${CFG.manager}`:"")};
+$("#ttBtn").onclick=e=>{e.preventDefault(); open_(CFG.tiktok)};
+
+// order
+let cur=null, qty=1;
+function openOrder(id){
+  cur=CFG.products.find(p=>p.id===id); qty=1; render();
+  $("#sheet").classList.add("on");
+}
+function render(){
+  const u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user || {};
+  $("#panel").innerHTML=`
+  <button class="close" onclick="closeSheet()">✕</button>
+  <h3>${cur.name}</h3>
+  <div class="sum">${cur.price} грн за шт.</div>
+  <label>Кількість</label>
+  <div class="qty"><button onclick="chg(-1)">−</button><b id="q">${qty}</b><button onclick="chg(1)">+</button>
+  <div style="margin-left:auto;font-weight:900;font-size:20px" id="tot">${cur.price*qty} грн</div></div>
+  <label>Ім'я та прізвище</label><input id="f_name" autocomplete="name" value="${[u.first_name,u.last_name].filter(Boolean).join(" ")}">
+  <label>Телефон</label><input id="f_phone" type="tel" placeholder="+380..." autocomplete="tel">
+  <label>Місто та відділення Нової Пошти</label><input id="f_np" placeholder="Київ, відділення №1">
+  <label>Коментар (необов'язково)</label><textarea id="f_note" rows="2"></textarea>
+  <div class="err" id="err"></div>
+  <button class="btn full" style="margin-top:16px" id="send" onclick="send()">Підтвердити замовлення</button>`;
+}
+function chg(d){qty=Math.max(1,Math.min(50,qty+d));$("#q").textContent=qty;$("#tot").textContent=cur.price*qty+" грн"}
+function closeSheet(){$("#sheet").classList.remove("on")}
+$("#sheet").onclick=e=>{if(e.target.id==="sheet")closeSheet()};
+async function send(){
+  const d={product:cur.name,qty,total:cur.price*qty,name:$("#f_name").value.trim(),phone:$("#f_phone").value.trim(),np:$("#f_np").value.trim(),note:$("#f_note").value.trim(),initData:tg?tg.initData:""};
+  const er=$("#err");
+  if(d.name.length<2||d.phone.replace(/\D/g,"").length<9||d.np.length<3){er.textContent="Заповни ім'я, телефон і відділення.";er.style.display="block";return}
+  $("#send").disabled=true;$("#send").textContent="Відправляю...";
+  try{
+    const r=await fetch("order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});
+    if(!r.ok) throw 0;
+    $("#panel").innerHTML=`<div class="done"><div class="ok">✅</div><h3>Замовлення прийнято!</h3><p class="sum">Менеджер зв'яжеться з тобою найближчим часом.</p><button class="btn full" onclick="closeSheet()">Закрити</button></div>`;
+    if(tg&&tg.HapticFeedback) tg.HapticFeedback.notificationOccurred("success");
+  }catch(e){er.textContent="Не вдалося відправити. Спробуй ще раз.";er.style.display="block";$("#send").disabled=false;$("#send").textContent="Підтвердити замовлення"}
+}
+</script>
+</body>
+</html>
