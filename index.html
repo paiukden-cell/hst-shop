@@ -117,6 +117,38 @@ nav button.on{background:rgba(139,92,246,.30);border-color:rgba(192,132,252,.55)
 :root[data-theme="light"] nav button.on{background:rgba(139,92,246,.2)}
 .chip.on{background:rgba(139,92,246,.26);border-color:rgba(192,132,252,.7)}
 .btn:active,nav button:active,.chip:active{filter:brightness(1.12);transform:scale(.97)}
+
+/* ===== more motion + footer ===== */
+footer.hst{text-align:center;font-size:10px;font-weight:600;letter-spacing:3px;color:var(--muted);opacity:.75;padding:6px 0 26px}
+section.on .prod{animation:none}
+.prod.rv{opacity:0;transform:translateY(34px) scale(.97);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1)}
+.prod.rv.in{opacity:1;transform:none}
+.prod img{transform:scale(1.14);transition:transform 1.3s cubic-bezier(.2,.8,.2,1)}
+.prod.in img{transform:scale(1)}
+.prod:hover img{transform:scale(1.04)}
+.logo b{background:linear-gradient(90deg,#8b5cf6,#e879f9,#60a5fa,#8b5cf6);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:lg 6s linear infinite}
+@keyframes lg{to{background-position:250% 0}}
+.big .ico{animation:flt 3.8s ease-in-out infinite}
+.card:nth-of-type(2) .big .ico{animation-delay:-1.6s}
+@keyframes flt{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-7px) rotate(-3deg)}}
+.kicker{animation:kk 3.2s ease-in-out infinite}
+@keyframes kk{0%,100%{letter-spacing:2px;opacity:.85}50%{letter-spacing:4px;opacity:1}}
+.hero h1{animation:h1 .9s cubic-bezier(.2,.8,.2,1) both}
+@keyframes h1{from{opacity:0;transform:translateY(14px) scale(.96);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+.price{transition:transform .3s}.prod.in .price{animation:pp .6s .25s cubic-bezier(.2,.8,.2,1) both}
+@keyframes pp{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:none}}
+.btn,nav button,.chip,.theme,.qty button,.close{overflow:hidden}
+.rip{position:absolute;border-radius:50%;background:rgba(255,255,255,.45);transform:scale(0);pointer-events:none;animation:rp .6s ease-out forwards}
+@keyframes rp{to{transform:scale(3.2);opacity:0}}
+#panel.first > *{animation:up2 .55s cubic-bezier(.2,.8,.2,1) both}
+#panel.first > :nth-child(3){animation-delay:.05s}#panel.first > :nth-child(4){animation-delay:.08s}
+#panel.first > :nth-child(5){animation-delay:.11s}#panel.first > :nth-child(6){animation-delay:.14s}
+#panel.first > :nth-child(7){animation-delay:.17s}#panel.first > :nth-child(8){animation-delay:.2s}
+#panel.first > :nth-child(9){animation-delay:.23s}#panel.first > :nth-child(10){animation-delay:.26s}
+#panel.first > :nth-child(11){animation-delay:.29s}#panel.first > :nth-child(12){animation-delay:.32s}
+.sheet.on{animation:fd .3s ease both}@keyframes fd{from{opacity:0}to{opacity:1}}
+.theme:active{transform:rotate(90deg) scale(.9)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.prod.rv{opacity:1;transform:none}}
 </style>
 </head>
 <body>
@@ -174,6 +206,7 @@ nav button.on{background:rgba(139,92,246,.30);border-color:rgba(192,132,252,.55)
     </div>
   </section>
 </main>
+<footer class="hst">#HST</footer>
 
 <div class="sheet" id="sheet"><div class="panel" id="panel"></div></div>
 
@@ -237,7 +270,7 @@ const fields=["f_name","f_phone","f_note"]; let saved={};
 function keep(){ fields.forEach(f=>{const e=document.getElementById(f); if(e) saved[f]=e.value}); }
 function restore(){ fields.forEach(f=>{const e=document.getElementById(f); if(e && saved[f]!==undefined) e.value=saved[f]}); }
 function openOrder(id){
-  cur=CFG.products.find(p=>p.id===id); qty=1; saved={}; render();
+  cur=CFG.products.find(p=>p.id===id); qty=1; saved={}; render(); const pn=document.getElementById('panel'); pn.classList.add('first'); setTimeout(()=>pn.classList.remove('first'),900);
   $("#sheet").classList.add("on");
 }
 function render(){
@@ -283,6 +316,26 @@ async function send(){
     if(tg&&tg.HapticFeedback) tg.HapticFeedback.notificationOccurred("success");
   }catch(e){er.textContent="Не вдалося відправити. Спробуй ще раз.";er.style.display="block";$("#send").disabled=false;$("#send").textContent="Підтвердити замовлення"}
 }
+
+// ---- motion helpers ----
+(function(){
+  const prods=[...document.querySelectorAll('#list .prod')];
+  prods.forEach(p=>p.classList.add('rv'));
+  const prices=new WeakSet();
+  function count(el){ const t=parseInt(el.dataset.v||el.textContent,10); el.dataset.v=t; const sm=el.querySelector('small'); const sTxt=sm?sm.outerHTML:'';
+    const t0=performance.now(), d=900; (function f(n){ const k=Math.min(1,(n-t0)/d), e=1-Math.pow(1-k,3); el.innerHTML=Math.round(t*e)+sTxt; if(k<1) requestAnimationFrame(f); })(t0); }
+  let io=null;
+  if('IntersectionObserver' in window){
+    io=new IntersectionObserver(es=>es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); const pr=e.target.querySelector('.price'); if(pr&&!prices.has(pr)){prices.add(pr);count(pr);} io.unobserve(e.target);} }),{threshold:.18});
+    prods.forEach(p=>io.observe(p));
+  } else prods.forEach(p=>p.classList.add('in'));
+  // re-run reveal when returning to catalog tab
+  document.getElementById('nav').addEventListener('click',e=>{ const b=e.target.closest('button'); if(b&&b.dataset.t==='catalog'&&io){ prods.forEach(p=>{p.classList.remove('in'); io.observe(p);}); } });
+  // ripple
+  document.addEventListener('pointerdown',e=>{ const b=e.target.closest('.btn,nav button,.chip,.qty button'); if(!b) return;
+    const r=b.getBoundingClientRect(), sz=Math.max(r.width,r.height), sp=document.createElement('span'); sp.className='rip';
+    sp.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+(e.clientX-r.left-sz/2)+'px;top:'+(e.clientY-r.top-sz/2)+'px'; b.appendChild(sp); setTimeout(()=>sp.remove(),650); });
+})();
 </script>
 </body>
 </html>
