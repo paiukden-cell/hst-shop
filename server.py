@@ -17,6 +17,7 @@ WEBAPP_URL = os.environ.get("WEBAPP_URL", "").rstrip("/")
 ADMIN_ID = os.environ.get("ADMIN_ID", "")
 MANAGER = os.environ.get("MANAGER", "g2hst_manager").lstrip("@")
 TIKTOK = os.environ.get("TIKTOK", "https://www.tiktok.com/@g2hst")
+JAR = os.environ.get("MONO_JAR", "")
 YOUTUBE = os.environ.get("YOUTUBE", "https://youtube.com/@g2hst?si=qaQ2cwDuvmlo11iv")
 API = f"https://api.telegram.org/bot{TOKEN}"
 
@@ -59,6 +60,10 @@ class H(SimpleHTTPRequestHandler):
     def log_message(self, *a):
         pass
 
+    def end_headers(self):
+        self.send_header("Cache-Control", "no-cache, must-revalidate")
+        super().end_headers()
+
     def _json(self, obj, code=200):
         b = json.dumps(obj).encode()
         self.send_response(code)
@@ -70,7 +75,7 @@ class H(SimpleHTTPRequestHandler):
     def do_GET(self):
         path = self.path.split("?")[0]
         if path == "/config":
-            return self._json({"manager": MANAGER, "tiktok": TIKTOK, "youtube": YOUTUBE})
+            return self._json({"manager": MANAGER, "tiktok": TIKTOK, "youtube": YOUTUBE, "jar": JAR})
         if path == "/":
             self.path = "/index.html"
         elif not path.lower().endswith((".jpg", ".png", ".html")):
@@ -92,7 +97,7 @@ class H(SimpleHTTPRequestHandler):
                     f"Товар: {esc(d.get('product'))}\nКількість: {int(d.get('qty', 1))}\n"
                     f"Сума: <b>{int(d.get('total', 0))} грн</b>\n\n"
                     f"Ім'я: {esc(d.get('name'))}\nТелефон: {esc(d.get('phone'))}\n"
-                    f"Нова Пошта: {esc(d.get('np'))}\nКоментар: {esc(d.get('note') or '—')}\n\n"
+                    f"Оплата: {esc(d.get('payment') or '—')}\nДоставка: {esc(d.get('delivery') or '—')}\nАдреса/відділення: {esc(d.get('np') or '—')}\nКоментар: {esc(d.get('note') or '—')}\n\n"
                     f"Telegram: {esc(uname)}")
             r = tg("sendMessage", chat_id=ADMIN_ID, text=text, parse_mode="HTML")
             return self._json({"ok": r.get("ok", False)}, 200 if r.get("ok") else 502)

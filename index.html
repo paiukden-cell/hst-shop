@@ -82,7 +82,19 @@ input:focus,textarea:focus{outline:2px solid var(--accent);border-color:transpar
 .qty button{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:20px}
 .qty b{min-width:24px;text-align:center;font-size:18px}
 .close{float:right;background:var(--card);border:1px solid var(--line);color:var(--text);width:34px;height:34px;border-radius:50%;font-size:16px}
-.done{text-align:center;padding:30px 10px}.done .ok{font-size:54px}
+.done{text-align:center;padding:30px 10px}
+.done .ok{color:var(--text);margin-bottom:8px}.done .ok svg{width:72px;height:72px}
+.cc{stroke-dasharray:145;stroke-dashoffset:145;animation:dr .6s ease forwards}
+.ck{stroke-dasharray:50;stroke-dashoffset:50;animation:dr .4s .45s ease forwards}
+@keyframes dr{to{stroke-dashoffset:0}}
+.chips{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.chip{background:var(--card);border:1.5px solid var(--line);color:var(--text);border-radius:14px;padding:12px 4px;font-size:12px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:6px;transition:border-color .2s,background .2s,transform .15s}
+.chip svg{width:26px;height:26px}
+.chip.on{border-color:var(--accent);background:var(--card2);box-shadow:0 0 0 1px var(--accent) inset}
+.chip:active{transform:scale(.96)}
+.pays{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pays .chip{flex-direction:row;justify-content:center;padding:12px 8px;text-align:center;line-height:1.2}
+.pays .chip svg{width:22px;height:22px;flex:none}
 .err{color:#f87171;font-size:13px;margin-top:10px;display:none}
 .ico{width:1.1em;height:1.1em;vertical-align:-.2em;margin-right:6px}
 .big{display:flex;justify-content:center;margin:2px 0 16px;color:var(--text)}
@@ -90,6 +102,21 @@ input:focus,textarea:focus{outline:2px solid var(--accent);border-color:transpar
 .big .ico{width:56px;height:56px;margin:0}
 nav button .ico{color:var(--text)}
 nav button.on .ico{color:#fff}
+
+/* ===== Clear glass buttons, matte (no gloss) ===== */
+:root{--g-fill:rgba(255,255,255,.05);--g-line:rgba(255,255,255,.22);--g-sh:rgba(0,0,0,.25)}
+:root[data-theme="light"]{--g-fill:rgba(255,255,255,.35);--g-line:rgba(255,255,255,.9);--g-sh:rgba(80,70,140,.16)}
+.btn,nav button,.chip,.theme,.qty button,.close{
+  position:relative;color:var(--text);text-shadow:none;overflow:visible;
+  background:var(--g-fill);border:1px solid var(--g-line);
+  -webkit-backdrop-filter:blur(8px) saturate(150%);backdrop-filter:blur(8px) saturate(150%);
+  box-shadow:0 6px 18px var(--g-sh)}
+.btn::before,nav button::before,.chip::before,.theme::before,.qty button::before,.close::before,.btn::after{content:none;display:none;animation:none}
+.btn{border-radius:16px;font-weight:800}
+nav button.on{background:rgba(139,92,246,.30);border-color:rgba(192,132,252,.55)}
+:root[data-theme="light"] nav button.on{background:rgba(139,92,246,.2)}
+.chip.on{background:rgba(139,92,246,.26);border-color:rgba(192,132,252,.7)}
+.btn:active,nav button:active,.chip:active{filter:brightness(1.12);transform:scale(.97)}
 </style>
 </head>
 <body>
@@ -153,11 +180,11 @@ nav button.on .ico{color:#fff}
 <script>
 const CFG = {
   products: [
-    {id:"plate",   name:"Табличка HST",  price:400, img:"plate.jpg",    desc:"Номерна табличка команди HST."},
-    {id:"keychain",name:"Брелок HST",    price:100, img:"keychain.jpg", desc:"Брелок з логотипом HST."},
-    {id:"stickers",name:"Стікерпак HST", price:200, img:"stickers.jpg", desc:"Набір вінілових стікерів HST."}
+    {id:"plate",   name:"Табличка HST",  price:400, img:"plate.jpg?v=3",    desc:"Номерна табличка команди HST."},
+    {id:"keychain",name:"Брелок HST",    price:100, img:"keychain.jpg?v=3", desc:"Брелок з логотипом HST."},
+    {id:"stickers",name:"Стікерпак HST", price:200, img:"stickers.jpg?v=3", desc:"Набір вінілових стікерів HST."}
   ],
-  manager: "", tiktok: "", youtube: ""   // перезаписується з /config
+  manager: "", tiktok: "", youtube: "", jar: ""   // перезаписується з /config
 };
 const tg = window.Telegram && Telegram.WebApp;
 if (tg){ tg.ready(); tg.expand(); }
@@ -192,7 +219,7 @@ $("#list").onclick=e=>{const b=e.target.closest("button[data-id]"); if(b) openOr
 // links from server config
 function open_(url){ if(!url) return; if(tg && url.includes("t.me")) tg.openTelegramLink(url); else if(tg) tg.openLink(url); else window.open(url,"_blank"); }
 fetch("config").then(r=>r.json()).then(c=>{
-  CFG.manager=c.manager||""; CFG.tiktok=c.tiktok||""; CFG.youtube=c.youtube||"";
+  CFG.manager=c.manager||""; CFG.tiktok=c.tiktok||""; CFG.youtube=c.youtube||""; CFG.jar=c.jar||"";
   $("#mgrName").textContent = CFG.manager?("@"+CFG.manager):"";
 }).catch(()=>{});
 $("#adBtn").onclick=e=>{e.preventDefault(); open_(CFG.manager?`https://t.me/${CFG.manager}`:"")};
@@ -201,9 +228,16 @@ $("#ytBtn").onclick=e=>{e.preventDefault(); open_(CFG.youtube)};
 $("#ttBtn").onclick=e=>{e.preventDefault(); open_(CFG.tiktok)};
 
 // order
-let cur=null, qty=1;
+let cur=null, qty=1, dlv="np", npVal="", pay="cod";
+const PN={cod:"Оплата при отриманні",online:"Карткою онлайн / Apple Pay"};
+function setP(x){ keep(); const e=document.getElementById("f_np"); if(e) npVal=e.value; pay=x; render(); restore(); }
+const DN={pickup:"Самовивіз",np:"Нова Пошта",up:"Укрпошта"};
+function setD(d){ const e=document.getElementById("f_np"); if(e) npVal=e.value; keep(); dlv=d; render(); restore(); }
+const fields=["f_name","f_phone","f_note"]; let saved={};
+function keep(){ fields.forEach(f=>{const e=document.getElementById(f); if(e) saved[f]=e.value}); }
+function restore(){ fields.forEach(f=>{const e=document.getElementById(f); if(e && saved[f]!==undefined) e.value=saved[f]}); }
 function openOrder(id){
-  cur=CFG.products.find(p=>p.id===id); qty=1; render();
+  cur=CFG.products.find(p=>p.id===id); qty=1; saved={}; render();
   $("#sheet").classList.add("on");
 }
 function render(){
@@ -217,23 +251,35 @@ function render(){
   <div style="margin-left:auto;font-weight:900;font-size:20px" id="tot">${cur.price*qty} грн</div></div>
   <label>Ім'я та прізвище</label><input id="f_name" autocomplete="name" value="${[u.first_name,u.last_name].filter(Boolean).join(" ")}">
   <label>Телефон</label><input id="f_phone" type="tel" placeholder="+380..." autocomplete="tel">
-  <label>Місто та відділення Нової Пошти</label><input id="f_np" placeholder="Київ, відділення №1">
+  <label>Спосіб отримання</label>
+  <div class="chips">
+    <button type="button" class="chip ${dlv==="pickup"?"on":""}" onclick="setD('pickup')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1.5-5h15L21 9M3 9v11h18V9M3 9h18M9 20v-6h6v6"/></svg>Самовивіз</button>
+    <button type="button" class="chip ${dlv==="np"?"on":""}" onclick="setD('np')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7M7 19a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM17 19a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>Нова Пошта</button>
+    <button type="button" class="chip ${dlv==="up"?"on":""}" onclick="setD('up')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7l9-4 9 4v10l-9 4-9-4zM3 7l9 4 9-4M12 11v10"/></svg>Укрпошта</button>
+  </div>
+  <div id="dwrap">${dlv==="pickup"?'<div class="sum" style="margin-top:12px">Самовивіз: менеджер зв\'яжеться з тобою і домовиться про місце та час.</div>':(`<label>${dlv==="np"?"Місто та відділення Нової Пошти":"Місто, індекс та відділення Укрпошти"}</label><input id="f_np" value="${npVal.replace(/"/g,"&quot;")}" placeholder="${dlv==="np"?"Київ, відділення №1":"Київ, 01001, відділення №1"}">`)}</div>
+  <label>Оплата</label>
+  <div class="pays">
+    <button type="button" class="chip ${pay==="cod"?"on":""}" onclick="setP('cod')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><circle cx="12" cy="13" r="2.5"/></svg>При отриманні</button>
+    ${CFG.jar?`<button type="button" class="chip ${pay==="online"?"on":""}" onclick="setP('online')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Карткою / Apple Pay</button>`:""}
+  </div>
   <label>Коментар (необов'язково)</label><textarea id="f_note" rows="2"></textarea>
   <div class="err" id="err"></div>
   <button class="btn full" style="margin-top:16px" id="send" onclick="send()">Підтвердити замовлення</button>`;
 }
 function chg(d){qty=Math.max(1,Math.min(50,qty+d));$("#q").textContent=qty;$("#tot").textContent=cur.price*qty+" грн"}
+function payNow(sum){ const u=CFG.jar+(CFG.jar.includes('?')?'&':'?')+'a='+sum+'&t='+encodeURIComponent('HST замовлення'); open_(u); }
 function closeSheet(){$("#sheet").classList.remove("on")}
 $("#sheet").onclick=e=>{if(e.target.id==="sheet")closeSheet()};
 async function send(){
-  const d={product:cur.name,qty,total:cur.price*qty,name:$("#f_name").value.trim(),phone:$("#f_phone").value.trim(),np:$("#f_np").value.trim(),note:$("#f_note").value.trim(),initData:tg?tg.initData:""};
+  const d={product:cur.name,qty,total:cur.price*qty,name:$("#f_name").value.trim(),phone:$("#f_phone").value.trim(),delivery:DN[dlv],payment:PN[pay],np:dlv==="pickup"?"":($("#f_np")?$("#f_np").value.trim():""),note:$("#f_note").value.trim(),initData:tg?tg.initData:""};
   const er=$("#err");
-  if(d.name.length<2||d.phone.replace(/\D/g,"").length<9||d.np.length<3){er.textContent="Заповни ім'я, телефон і відділення.";er.style.display="block";return}
+  if(d.name.length<2||d.phone.replace(/\D/g,"").length<9||(dlv!=="pickup"&&d.np.length<3)){er.textContent="Заповни ім'я, телефон і дані для отримання.";er.style.display="block";return}
   $("#send").disabled=true;$("#send").textContent="Відправляю...";
   try{
     const r=await fetch("order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});
     if(!r.ok) throw 0;
-    $("#panel").innerHTML=`<div class="done"><div class="ok">✅</div><h3>Замовлення прийнято!</h3><p class="sum">Менеджер зв'яжеться з тобою найближчим часом.</p><button class="btn full" onclick="closeSheet()">Закрити</button></div>`;
+    $("#panel").innerHTML=`<div class="done"><div class="ok"><svg viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle class="cc" cx="26" cy="26" r="23"/><path class="ck" d="M15 27l8 8 15-17"/></svg></div><h3>Замовлення прийнято!</h3><p class="sum">Менеджер зв'яжеться з тобою найближчим часом.</p>${pay==="online"&&CFG.jar?`<button class="btn full" style="margin-bottom:10px" onclick="payNow(${d.total})">Оплатити ${d.total} грн</button><p class="sum" style="font-size:12px">Оплата відкриється в Monobank. У коментарі до платежу вкажи своє ім'я.</p>`:""}<button class="btn full" onclick="closeSheet()">Закрити</button></div>`;
     if(tg&&tg.HapticFeedback) tg.HapticFeedback.notificationOccurred("success");
   }catch(e){er.textContent="Не вдалося відправити. Спробуй ще раз.";er.style.display="block";$("#send").disabled=false;$("#send").textContent="Підтвердити замовлення"}
 }
