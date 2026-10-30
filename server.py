@@ -17,10 +17,11 @@ WEBAPP_URL = os.environ.get("WEBAPP_URL", "").rstrip("/")
 ADMIN_ID = os.environ.get("ADMIN_ID", "")
 MANAGER = os.environ.get("MANAGER", "g2hst_manager").lstrip("@")
 TIKTOK = os.environ.get("TIKTOK", "https://www.tiktok.com/@g2hst")
+YOUTUBE = os.environ.get("YOUTUBE", "https://youtube.com/@g2hst?si=qaQ2cwDuvmlo11iv")
 API = f"https://api.telegram.org/bot{TOKEN}"
 
 WELCOME = ("Вітаємо в магазині HST!\n\n"
-           "Тут можна замовити таблички, брелки та стікерпаки Hutory Stunt Team.\n\n"
+           "Тут можна замовити таблички, брелки та стікерпаки HST.\n\n"
            "З усіх питань і замовлень звертайтесь до менеджера" + (f" @{MANAGER}." if MANAGER else "."))
 
 
@@ -69,7 +70,7 @@ class H(SimpleHTTPRequestHandler):
     def do_GET(self):
         path = self.path.split("?")[0]
         if path == "/config":
-            return self._json({"manager": MANAGER, "tiktok": TIKTOK})
+            return self._json({"manager": MANAGER, "tiktok": TIKTOK, "youtube": YOUTUBE})
         if path == "/":
             self.path = "/index.html"
         elif not path.lower().endswith((".jpg", ".png", ".html")):
