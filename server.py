@@ -18,6 +18,11 @@ ADMIN_ID = os.environ.get("ADMIN_ID", "")
 MANAGER = os.environ.get("MANAGER", "g2hst_manager").lstrip("@")
 TIKTOK = os.environ.get("TIKTOK", "https://www.tiktok.com/@g2hst")
 JAR = os.environ.get("MONO_JAR", "")
+YT_KEY = os.environ.get("YOUTUBE_API_KEY", "")
+YT_HANDLE = os.environ.get("YT_HANDLE", "g2hst")
+YT_SUBS = os.environ.get("YT_SUBS", "")
+TT_FOLLOWERS = os.environ.get("TT_FOLLOWERS", "")
+_cache = {"t": 0, "yt": None}
 YOUTUBE = os.environ.get("YOUTUBE", "https://youtube.com/@g2hst?si=qaQ2cwDuvmlo11iv")
 API = f"https://api.telegram.org/bot{TOKEN}"
 
@@ -49,6 +54,30 @@ def valid_init_data(init_data):
     return None
 
 
+def to_int(v):
+    try:
+        return int(str(v).replace(" ", "").replace(",", ""))
+    except Exception:
+        return None
+
+
+def youtube_subs():
+    """Live subscriber count via YouTube Data API (cached 30 min); falls back to YT_SUBS."""
+    if YT_KEY and time.time() - _cache["t"] > 1800:
+        try:
+            url = ("https://www.googleapis.com/youtube/v3/channels?part=statistics&forHandle="
+                   + urllib.parse.quote(YT_HANDLE) + "&key=" + urllib.parse.quote(YT_KEY))
+            with urllib.request.urlopen(url, timeout=10) as r:
+                items = json.load(r).get("items") or []
+            if items:
+                _cache["yt"] = int(items[0]["statistics"]["subscriberCount"])
+            _cache["t"] = time.time()
+        except Exception as e:
+            print("youtube api error", e)
+            _cache["t"] = time.time() - 1500   # retry in ~5 min
+    return _cache["yt"] if _cache["yt"] is not None else to_int(YT_SUBS)
+
+
 def esc(s):
     return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")[:300]
 
@@ -74,6 +103,8 @@ class H(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         path = self.path.split("?")[0]
+        if path == "/stats":
+            return self._json({"youtube": youtube_subs(), "tiktok": to_int(TT_FOLLOWERS)})
         if path == "/config":
             return self._json({"manager": MANAGER, "tiktok": TIKTOK, "youtube": YOUTUBE, "jar": JAR})
         if path == "/":
