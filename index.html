@@ -247,7 +247,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 body::after{content:"";position:fixed;z-index:0;pointer-events:none;width:320px;height:320px;border-radius:50%;left:-90px;top:30vh;background:radial-gradient(circle,rgba(139,92,246,.22),transparent 65%);filter:blur(10px);animation:orb 16s ease-in-out infinite alternate}
 :root[data-halloween] body::after{background:radial-gradient(circle,rgba(255,122,0,.25),transparent 65%)}
 @keyframes orb{0%{transform:translate(0,0) scale(1)}50%{transform:translate(60vw,18vh) scale(1.25)}100%{transform:translate(20vw,-12vh) scale(.9)}}
-header,main,.wrap,footer,.hero,.card,.prod{position:relative;z-index:1}
+main,.wrap,footer,.hero,.card,.prod{position:relative;z-index:1}
 .hero h1{background:linear-gradient(90deg,var(--text),var(--accent2),var(--text));background-size:220% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:h1 .9s cubic-bezier(.2,.8,.2,1) both,shine 5s 1s linear infinite}
 @keyframes shine{to{background-position:-220% 0}}
 .prod{overflow:hidden}
@@ -282,6 +282,35 @@ input:focus,textarea:focus{box-shadow:0 0 0 4px rgba(139,92,246,.18);transform:t
 .sp{position:fixed;z-index:98;width:6px;height:6px;border-radius:50%;pointer-events:none;background:var(--accent2);box-shadow:0 0 8px var(--accent2);animation:spk .65s ease-out forwards}
 @keyframes spk{to{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
 @media (prefers-reduced-motion:reduce){body::after,.prod .btn,.gear,.out,.vth .pl{animation:none!important}}
+/* ===== motion pack 3 ===== */
+header{transition:padding .3s,box-shadow .3s}
+header.sm{padding-top:7px;padding-bottom:6px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+header .logo{transition:transform .3s,font-size .3s;transform-origin:left center}
+header.sm .logo{transform:scale(.82)}
+#list .prod:not(.in){opacity:0}
+#list .prod:nth-child(odd):not(.in){transform:translateX(-40px) rotate(-1.5deg)}
+#list .prod:nth-child(even):not(.in){transform:translateX(40px) rotate(1.5deg)}
+#list .prod{transition:transform .8s cubic-bezier(.2,.8,.2,1),opacity .8s}
+.hero{will-change:transform}
+.mq.rev .mq-t{animation-direction:reverse;animation-duration:22s;color:var(--accent2);opacity:.8}
+.logo.gl{animation:gl .5s steps(2,end)}
+@keyframes gl{0%{transform:translate(0)}20%{transform:translate(-3px,1px) skewX(8deg);text-shadow:3px 0 #ff2bd6,-3px 0 #22d3ee}40%{transform:translate(3px,-1px) skewX(-8deg);text-shadow:-3px 0 #ff2bd6,3px 0 #22d3ee}60%{transform:translate(-2px,0)}100%{transform:none;text-shadow:none}}
+#err.shk{animation:shk .45s}
+@keyframes shk{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.panel label,.panel .chips,.panel .qty,.panel input,.panel textarea{animation:fi .5s cubic-bezier(.2,.8,.2,1) both}
+.panel>*:nth-child(3){animation-delay:.05s}.panel>*:nth-child(4){animation-delay:.1s}.panel>*:nth-child(5){animation-delay:.15s}.panel>*:nth-child(6){animation-delay:.2s}.panel>*:nth-child(7){animation-delay:.25s}.panel>*:nth-child(8){animation-delay:.3s}.panel>*:nth-child(9){animation-delay:.35s}
+@keyframes fi{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.wave{position:fixed;z-index:97;left:var(--wx,50%);top:var(--wy,30px);width:20px;height:20px;margin:-10px;border-radius:50%;pointer-events:none;background:var(--accent);opacity:.35;animation:wv .7s ease-out forwards}
+@keyframes wv{to{transform:scale(90);opacity:0}}
+nav button.on{animation:np 2.6s ease-in-out infinite}
+@keyframes np{0%,100%{box-shadow:0 0 0 0 rgba(139,92,246,.0)}50%{box-shadow:0 0 18px 0 rgba(139,92,246,.45)}}
+:root[data-halloween] nav button.on{animation-name:np2}
+@keyframes np2{0%,100%{box-shadow:0 0 0 0 rgba(255,122,0,0)}50%{box-shadow:0 0 18px 0 rgba(255,122,0,.5)}}
+.done .ok svg{animation:okp .6s .9s cubic-bezier(.2,1.6,.3,1)}
+@keyframes okp{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+.vcard{animation:fi .6s cubic-bezier(.2,.8,.2,1) both}
+.card .big .ico{will-change:transform}
+@media (prefers-reduced-motion:reduce){nav button.on,.mq-t,.hero{animation:none!important}}
 </style>
 </head>
 <body>
@@ -305,6 +334,7 @@ input:focus,textarea:focus{box-shadow:0 0 0 4px rgba(139,92,246,.18);transform:t
       <p>Таблички, брелки та стікерпаки. Відправляємо Новою Поштою по всій Україні.</p>
     </div>
     <div class="mq"><div class="mq-t"><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ STUNT TEAM ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ STUNT TEAM ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ STUNT TEAM ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ STUNT TEAM ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ STUNT TEAM ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ STUNT TEAM ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ STUNT TEAM ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ STUNT TEAM ✦ </span></div></div>
+    <div class="mq rev"><div class="mq-t"><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span></div></div>
     <h2>Каталог</h2>
     <p class="sub">Обери товар і натисни «Замовити».</p>
     <div id="list"></div>
@@ -448,7 +478,7 @@ $("#sheet").onclick=e=>{if(e.target.id==="sheet")closeSheet()};
 async function send(){
   const d={product:cur.name,qty,total:cur.price*qty,name:$("#f_name").value.trim(),phone:$("#f_phone").value.trim(),delivery:DN[dlv],payment:PN[pay],np:dlv==="pickup"?"":($("#f_np")?$("#f_np").value.trim():""),note:$("#f_note").value.trim(),initData:tg?tg.initData:""};
   const er=$("#err");
-  if(d.name.length<2||d.phone.replace(/\D/g,"").length<9||(dlv!=="pickup"&&d.np.length<3)){er.textContent="Заповни ім'я, телефон і дані для отримання.";er.style.display="block";return}
+  if(d.name.length<2||d.phone.replace(/\D/g,"").length<9||(dlv!=="pickup"&&d.np.length<3)){er.textContent="Заповни ім'я, телефон і дані для отримання.";er.style.display="block";er.classList.remove("shk");void er.offsetWidth;er.classList.add("shk");if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred("error");return}
   $("#send").disabled=true;$("#send").textContent="Відправляю...";
   try{
     const r=await fetch("order",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(d)});
@@ -561,6 +591,16 @@ function confetti(){
     document.body.appendChild(d); setTimeout(()=>d.remove(),700); } }
   document.addEventListener('pointerdown',e=>{ if(e.target.closest('.btn,nav button,.chip')) spark(e.clientX,e.clientY); });
   const _chg=window.chg; if(_chg){ window.chg=function(d){ _chg(d); ['q','tot'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); } }); }; }
+})();
+
+// ---- motion pack 3 js ----
+(function(){
+  const hd=document.querySelector('header'), hero=document.querySelector('.hero'), lg=document.querySelector('.logo');
+  let tk=false;
+  addEventListener('scroll',()=>{ if(tk) return; tk=true; requestAnimationFrame(()=>{ tk=false; const y=scrollY; hd.classList.toggle('sm',y>40); if(hero&&y<500) hero.style.transform='translateY('+(y*.12)+'px) scale('+(1-Math.min(y,400)/4000)+')'; }); },{passive:true});
+  lg.addEventListener('click',()=>{ lg.classList.remove('gl'); void lg.offsetWidth; lg.classList.add('gl'); });
+  document.getElementById('theme').addEventListener('click',e=>{ const r=e.currentTarget.getBoundingClientRect(); const w=document.createElement('i'); w.className='wave';
+    w.style.setProperty('--wx',(r.left+r.width/2)+'px'); w.style.setProperty('--wy',(r.top+r.height/2)+'px'); document.body.appendChild(w); setTimeout(()=>w.remove(),800); });
 })();
 </script>
 </body>
