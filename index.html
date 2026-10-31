@@ -242,6 +242,46 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opa
 :root[data-halloween] body::before{opacity:1}
 .hw{position:fixed;top:-40px;z-index:60;pointer-events:none;font-size:22px;animation:hwf var(--d,9s) linear forwards}
 @keyframes hwf{to{transform:translate3d(var(--x,0),110vh,0) rotate(var(--r,360deg))}}
+.out{width:100%;text-align:center;padding:13px 16px;border-radius:14px;border:1px dashed var(--line);color:var(--muted);font-weight:800;font-size:13px;letter-spacing:.6px;text-transform:uppercase}
+/* ===== motion pack 2 ===== */
+body::after{content:"";position:fixed;z-index:0;pointer-events:none;width:320px;height:320px;border-radius:50%;left:-90px;top:30vh;background:radial-gradient(circle,rgba(139,92,246,.22),transparent 65%);filter:blur(10px);animation:orb 16s ease-in-out infinite alternate}
+:root[data-halloween] body::after{background:radial-gradient(circle,rgba(255,122,0,.25),transparent 65%)}
+@keyframes orb{0%{transform:translate(0,0) scale(1)}50%{transform:translate(60vw,18vh) scale(1.25)}100%{transform:translate(20vw,-12vh) scale(.9)}}
+header,main,.wrap,footer,.hero,.card,.prod{position:relative;z-index:1}
+.hero h1{background:linear-gradient(90deg,var(--text),var(--accent2),var(--text));background-size:220% 100%;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:h1 .9s cubic-bezier(.2,.8,.2,1) both,shine 5s 1s linear infinite}
+@keyframes shine{to{background-position:-220% 0}}
+.prod{overflow:hidden}
+.prod::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.10),transparent);transform:skewX(-18deg);pointer-events:none;opacity:0}
+.prod.in::after{animation:sweep 1.3s .4s ease-out 1 both}
+@keyframes sweep{0%{left:-60%;opacity:1}100%{left:140%;opacity:1}}
+.prod .btn{animation:bp 2.8s ease-in-out infinite}
+@keyframes bp{0%,100%{transform:scale(1)}50%{transform:scale(1.045)}}
+.prod .btn:active{animation:none;transform:scale(.94)}
+.out{animation:op 3s ease-in-out infinite}
+@keyframes op{0%,100%{opacity:.6}50%{opacity:1}}
+.gear{animation:gw 5s ease-in-out infinite}
+@keyframes gw{0%,86%,100%{transform:rotate(0)}90%{transform:rotate(-25deg)}95%{transform:rotate(25deg)}}
+.gear.open{animation:none}
+.chip{animation:ci .5s cubic-bezier(.2,.8,.2,1) both}
+.chip:nth-child(2){animation-delay:.06s}.chip:nth-child(3){animation-delay:.12s}.chip:nth-child(4){animation-delay:.18s}
+@keyframes ci{from{opacity:0;transform:translateY(10px) scale(.92)}to{opacity:1;transform:none}}
+.chip:active,.card:active{transform:scale(.97)}
+.qty b.bump{animation:bm .35s cubic-bezier(.2,1.6,.3,1)}
+@keyframes bm{0%{transform:scale(.6)}100%{transform:scale(1)}}
+#tot.bump{animation:bm .35s cubic-bezier(.2,1.6,.3,1)}
+input,textarea{transition:box-shadow .25s,transform .25s}
+input:focus,textarea:focus{box-shadow:0 0 0 4px rgba(139,92,246,.18);transform:translateY(-1px)}
+:root[data-halloween] input:focus,:root[data-halloween] textarea:focus{box-shadow:0 0 0 4px rgba(255,122,0,.2)}
+.sheet{backdrop-filter:blur(0);-webkit-backdrop-filter:blur(0)}
+.sheet.on{animation:fd .3s ease both,bl .4s ease both}
+@keyframes bl{to{backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}}
+.vcard{transition:transform .25s}.vcard:active{transform:scale(.97)}
+.vth .pl{animation:plp 2.2s ease-in-out infinite}
+@keyframes plp{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.card .big .ico{transition:transform .3s}.card:active .big .ico{transform:scale(1.15) rotate(-6deg)}
+.sp{position:fixed;z-index:98;width:6px;height:6px;border-radius:50%;pointer-events:none;background:var(--accent2);box-shadow:0 0 8px var(--accent2);animation:spk .65s ease-out forwards}
+@keyframes spk{to{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
+@media (prefers-reduced-motion:reduce){body::after,.prod .btn,.gear,.out,.vth .pl{animation:none!important}}
 </style>
 </head>
 <body>
@@ -316,7 +356,7 @@ const CFG = {
   products: [
     {id:"plate",   name:"Табличка HST",  price:400, img:"plate.jpg?v=3",    desc:"Номерна табличка команди HST."},
     {id:"keychain",name:"Брелок HST",    price:100, img:"keychain.jpg?v=3", desc:"Брелок з логотипом HST."},
-    {id:"stickers",name:"Стікерпак HST", price:200, img:"stickers.jpg?v=3", desc:"Набір вінілових стікерів HST."}
+    {id:"stickers",name:"Стікерпак HST", out:true, price:200, img:"stickers.jpg?v=3", desc:"Набір вінілових стікерів HST."}
   ],
   manager: "", tiktok: "", youtube: "", jar: ""   // перезаписується з /config
 };
@@ -344,10 +384,10 @@ $("#nav").onclick=e=>{
 
 // catalog
 $("#list").innerHTML = CFG.products.map(p=>`
-  <div class="prod"><img src="${p.img}" alt="">
+  <div class="prod">${p.out?"":`<img src="${p.img}" alt="">`}
   <div class="pb"><h3>${p.name}</h3><p>${p.desc}</p>
-  <div class="row"><div class="price">${p.price}<small>грн</small></div>
-  <button class="btn" data-id="${p.id}">Замовити →</button></div></div></div>`).join("");
+  ${p.out?`<div class="row"><div class="out">Немає в наявності</div></div>`:`<div class="row"><div class="price">${p.price}<small>грн</small></div>
+  <button class="btn" data-id="${p.id}">Замовити →</button></div>`}</div></div>`).join("");
 $("#list").onclick=e=>{const b=e.target.closest("button[data-id]"); if(b) openOrder(b.dataset.id)};
 
 // links from server config
@@ -512,6 +552,15 @@ function confetti(){
   let saved=null; try{saved=localStorage.getItem('halloween')}catch(e){}
   apply(saved==='1',false);
   hw.onclick=e=>{ e.stopPropagation(); apply(!hw.classList.contains('on'),true); if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.HapticFeedback) Telegram.WebApp.HapticFeedback.notificationOccurred('success'); };
+})();
+
+// ---- motion pack 2 js ----
+(function(){
+  function spark(x,y){ for(let i=0;i<8;i++){ const d=document.createElement('i'); d.className='sp'; const a=i/8*6.283, r=24+Math.random()*22;
+    d.style.left=x+'px'; d.style.top=y+'px'; d.style.setProperty('--dx',Math.cos(a)*r+'px'); d.style.setProperty('--dy',Math.sin(a)*r+'px');
+    document.body.appendChild(d); setTimeout(()=>d.remove(),700); } }
+  document.addEventListener('pointerdown',e=>{ if(e.target.closest('.btn,nav button,.chip')) spark(e.clientX,e.clientY); });
+  const _chg=window.chg; if(_chg){ window.chg=function(d){ _chg(d); ['q','tot'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); } }); }; }
 })();
 </script>
 </body>
