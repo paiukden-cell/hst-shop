@@ -78,6 +78,28 @@ def youtube_subs():
     return _cache["yt"] if _cache["yt"] is not None else to_int(YT_SUBS)
 
 
+_titles = {}
+
+
+def video_title(vid):
+    """Video title via YouTube oEmbed (no API key needed), cached in memory."""
+    import re
+    if not re.fullmatch(r"[\w-]{11}", vid or ""):
+        return None
+    if vid in _titles:
+        return _titles[vid]
+    try:
+        url = "https://www.youtube.com/oembed?format=json&url=" + urllib.parse.quote("https://youtu.be/" + vid, safe="")
+        with urllib.request.urlopen(url, timeout=10) as r:
+            t = json.load(r).get("title")
+        if t:
+            _titles[vid] = t
+        return t
+    except Exception as e:
+        print("oembed error", e)
+        return None
+
+
 def esc(s):
     return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")[:300]
 
@@ -103,6 +125,9 @@ class H(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         path = self.path.split("?")[0]
+        if path == "/video":
+            q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
+            return self._json({"title": video_title((q.get("id") or [""])[0])})
         if path == "/stats":
             return self._json({"youtube": youtube_subs(), "tiktok": to_int(TT_FOLLOWERS)})
         if path == "/config":
