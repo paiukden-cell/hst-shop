@@ -311,6 +311,13 @@ nav button.on{animation:np 2.6s ease-in-out infinite}
 .vcard{animation:fi .6s cubic-bezier(.2,.8,.2,1) both}
 .card .big .ico{will-change:transform}
 @media (prefers-reduced-motion:reduce){nav button.on,.mq-t,.hero{animation:none!important}}
+.cols{display:flex;gap:8px;margin:10px 0 2px;flex-wrap:wrap}
+.col{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:13px;font-weight:800;transition:transform .2s,border-color .2s,box-shadow .2s}
+.col i,.chip .dot{width:16px;height:16px;border-radius:50%;border:1px solid rgba(128,128,128,.55);display:inline-block;flex:none}
+.col.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset,0 0 14px rgba(139,92,246,.35)}
+.col:active{transform:scale(.94)}
+html,body{overflow-x:clip}
+.prod img{transition:opacity .16s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
 </style>
 </head>
 <body>
@@ -378,13 +385,15 @@ nav button.on{animation:np 2.6s ease-in-out infinite}
 <footer class="hst">#HST</footer>
 
 <button class="gear" id="gear" aria-label="Налаштування"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 01-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 010-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 014 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 010 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></button>
-<div class="pop" id="pop"><div class="row"><span>Liquid Glass</span><button class="sw" id="sw" role="switch" aria-checked="true" aria-label="Liquid Glass"></button></div><div class="row"><span>🎃 Хелловін</span><button class="sw" id="hw" role="switch" aria-checked="false" aria-label="Хелловін"></button></div></div>
+<div class="pop" id="pop"><div class="row"><span>Liquid Glass</span><button class="sw" id="sw" role="switch" aria-checked="true" aria-label="Liquid Glass"></button></div></div>
 <div class="sheet" id="sheet"><div class="panel" id="panel"></div></div>
 
 <script>
 const CFG = {
   products: [
-    {id:"plate",   name:"Табличка HST",  price:400, img:"plate.jpg?v=3",    desc:"Номерна табличка команди HST."},
+    {id:"plate",   name:"Табличка HST",  price:300, img:"plate.jpg?v=3",    desc:"Номерна табличка команди HST."},
+    {id:"vst",     name:"Табличка VST Vinnitsa Stunt Team", price:300, img:"vst_black.jpg?v=6", desc:"Номерна табличка VST · Vinnitsa Stunt Team. Обери колір.",
+       colors:[{id:"black",name:"Чорна",img:"vst_black.jpg?v=6",dot:"#111"},{id:"white",name:"Біла",img:"vst_white.jpg?v=5",dot:"#f4f4f4"}]},
     {id:"keychain",name:"Брелок HST",    price:100, img:"keychain.jpg?v=3", desc:"Брелок з логотипом HST."},
     {id:"stickers",name:"Стікерпак HST", out:true, price:200, img:"stickers.jpg?v=3", desc:"Набір вінілових стікерів HST."}
   ],
@@ -416,9 +425,17 @@ $("#nav").onclick=e=>{
 $("#list").innerHTML = CFG.products.map(p=>`
   <div class="prod">${p.out?"":`<img src="${p.img}" alt="">`}
   <div class="pb"><h3>${p.name}</h3><p>${p.desc}</p>
+  ${p.colors?`<div class="cols">${p.colors.map((c,i)=>`<button type="button" class="col ${i?"":"on"}" data-p="${p.id}" data-c="${c.id}"><i style="background:${c.dot}"></i>${c.name}</button>`).join("")}</div>`:""}
   ${p.out?`<div class="row"><div class="out">Немає в наявності</div></div>`:`<div class="row"><div class="price">${p.price}<small>грн</small></div>
   <button class="btn" data-id="${p.id}">Замовити →</button></div>`}</div></div>`).join("");
-$("#list").onclick=e=>{const b=e.target.closest("button[data-id]"); if(b) openOrder(b.dataset.id)};
+const pcol={}; CFG.products.forEach(p=>{ if(p.colors) pcol[p.id]=p.colors[0].id; });
+$("#list").onclick=e=>{
+  const c=e.target.closest("button.col");
+  if(c){ const p=CFG.products.find(x=>x.id===c.dataset.p), col=p.colors.find(x=>x.id===c.dataset.c); pcol[p.id]=col.id;
+    c.parentNode.querySelectorAll(".col").forEach(x=>x.classList.toggle("on",x===c));
+    const im=c.closest(".prod").querySelector("img"); im.style.opacity=0; setTimeout(()=>{ im.src=col.img; im.style.opacity=1; },160);
+    if(tg&&tg.HapticFeedback) tg.HapticFeedback.selectionChanged(); return; }
+  const b=e.target.closest("button[data-id]"); if(b) openOrder(b.dataset.id)};
 
 // links from server config
 function open_(url){ if(!url) return; if(tg && url.includes("t.me")) tg.openTelegramLink(url); else if(tg) tg.openLink(url); else window.open(url,"_blank"); }
@@ -450,6 +467,7 @@ function render(){
   <button class="close" onclick="closeSheet()">✕</button>
   <h3>${cur.name}</h3>
   <div class="sum">${cur.price} грн за шт.</div>
+  ${cur.colors?`<label>Колір</label><div class="chips" id="colchips">${cur.colors.map(c=>`<button type="button" class="chip ${pcol[cur.id]===c.id?"on":""}" onclick="setC('${c.id}')"><i class="dot" style="background:${c.dot}"></i>${c.name}</button>`).join("")}</div>`:""}
   <label>Кількість</label>
   <div class="qty"><button onclick="chg(-1)">−</button><b id="q">${qty}</b><button onclick="chg(1)">+</button>
   <div style="margin-left:auto;font-weight:900;font-size:20px" id="tot">${cur.price*qty} грн</div></div>
@@ -471,12 +489,13 @@ function render(){
   <div class="err" id="err"></div>
   <button class="btn full" style="margin-top:16px" id="send" onclick="send()">Підтвердити замовлення</button>`;
 }
+function setC(c){ keep(); const e=document.getElementById('f_np'); if(e) npVal=e.value; pcol[cur.id]=c; render(); restore(); }
 function chg(d){qty=Math.max(1,Math.min(50,qty+d));$("#q").textContent=qty;$("#tot").textContent=cur.price*qty+" грн"}
 function payNow(sum){ const u=CFG.jar+(CFG.jar.includes('?')?'&':'?')+'a='+sum+'&t='+encodeURIComponent('HST замовлення'); open_(u); }
 function closeSheet(){$("#sheet").classList.remove("on")}
 $("#sheet").onclick=e=>{if(e.target.id==="sheet")closeSheet()};
 async function send(){
-  const d={product:cur.name,qty,total:cur.price*qty,name:$("#f_name").value.trim(),phone:$("#f_phone").value.trim(),delivery:DN[dlv],payment:PN[pay],np:dlv==="pickup"?"":($("#f_np")?$("#f_np").value.trim():""),note:$("#f_note").value.trim(),initData:tg?tg.initData:""};
+  const d={product:cur.name+(cur.colors?" — колір: "+cur.colors.find(c=>c.id===pcol[cur.id]).name:""),qty,total:cur.price*qty,name:$("#f_name").value.trim(),phone:$("#f_phone").value.trim(),delivery:DN[dlv],payment:PN[pay],np:dlv==="pickup"?"":($("#f_np")?$("#f_np").value.trim():""),note:$("#f_note").value.trim(),initData:tg?tg.initData:""};
   const er=$("#err");
   if(d.name.length<2||d.phone.replace(/\D/g,"").length<9||(dlv!=="pickup"&&d.np.length<3)){er.textContent="Заповни ім'я, телефон і дані для отримання.";er.style.display="block";er.classList.remove("shk");void er.offsetWidth;er.classList.add("shk");if(tg&&tg.HapticFeedback)tg.HapticFeedback.notificationOccurred("error");return}
   $("#send").disabled=true;$("#send").textContent="Відправляю...";
@@ -567,22 +586,6 @@ function confetti(){
     d.style.setProperty('--x',((Math.random()-.5)*160)+'px'); d.style.setProperty('--r',(Math.random()*900)+'deg'); d.style.setProperty('--d',(1.5+Math.random()*1.3)+'s');
     d.style.animationDelay=(Math.random()*.35)+'s'; document.body.appendChild(d); setTimeout(()=>d.remove(),3400); }
 }
-
-// ---- halloween toggle ----
-(function(){
-  const root=document.documentElement, hw=document.getElementById('hw'); let timer=null;
-  function fall(){ const e=document.createElement('i'); e.className='hw'; e.textContent=['🎃','🦇','👻','🕸️','🍬'][Math.floor(Math.random()*5)];
-    e.style.left=(Math.random()*96)+'vw'; e.style.fontSize=(16+Math.random()*16)+'px';
-    e.style.setProperty('--x',((Math.random()-.5)*80)+'px'); e.style.setProperty('--r',((Math.random()-.5)*420)+'deg'); e.style.setProperty('--d',(7+Math.random()*5)+'s');
-    document.body.appendChild(e); setTimeout(()=>e.remove(),12500); }
-  function apply(on,save){ if(on) root.setAttribute('data-halloween','1'); else root.removeAttribute('data-halloween');
-    hw.classList.toggle('on',on); hw.setAttribute('aria-checked',on);
-    clearInterval(timer); if(on && !matchMedia('(prefers-reduced-motion: reduce)').matches){ for(let i=0;i<5;i++) setTimeout(fall,i*250); timer=setInterval(fall,1800); }
-    if(save){try{localStorage.setItem('halloween',on?'1':'0')}catch(e){}} }
-  let saved=null; try{saved=localStorage.getItem('halloween')}catch(e){}
-  apply(saved==='1',false);
-  hw.onclick=e=>{ e.stopPropagation(); apply(!hw.classList.contains('on'),true); if(window.Telegram&&Telegram.WebApp&&Telegram.WebApp.HapticFeedback) Telegram.WebApp.HapticFeedback.notificationOccurred('success'); };
-})();
 
 // ---- motion pack 2 js ----
 (function(){
