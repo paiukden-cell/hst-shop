@@ -342,6 +342,7 @@ header{background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-
 .adfx .adf{position:absolute;left:9.9%;top:41.2%;width:77%;height:auto;filter:drop-shadow(0 4px 14px rgba(0,0,0,.6))}
 @keyframes adL{from{background-position:0% 0}to{background-position:100% 0}}
 @keyframes adR{from{background-position:100% 0}to{background-position:0% 0}}
+[data-ed].edt{outline:1.5px dashed var(--accent2);outline-offset:3px;border-radius:6px;cursor:pointer}
 .adcard{margin-top:14px}
 .adimg{width:100%;aspect-ratio:5/3;object-fit:cover;border-radius:14px;background:#000;display:block;margin-bottom:12px}
 .adcard h3{margin:0 0 6px;font-size:18px}.addesc{margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.45}
@@ -353,7 +354,7 @@ header{background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-
 <div class="bgimg" aria-hidden="true"></div>
 <header>
   <div class="top">
-    <div class="logo"><b>VST</b> SHOP</div>
+    <div class="logo" data-ed="logo"><b>VST</b> SHOP</div>
     <button class="theme" id="theme">☀</button>
   </div>
   <nav id="nav">
@@ -366,48 +367,48 @@ header{background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-
 <main>
   <section id="catalog" class="on">
     <div class="hero">
-      <div class="kicker">VST</div>
-      <h1>Мерч команди VST</h1>
-      <p>Таблички, брелки та стікерпаки Vinnitsa Stunt Team. Відправляємо Новою Поштою по всій Україні.</p>
+      <div class="kicker" data-ed="kick">VST</div>
+      <h1 data-ed="h1">Мерч команди VST</h1>
+      <p data-ed="hp">Таблички, брелки та стікерпаки Vinnitsa Stunt Team. Відправляємо Новою Поштою по всій Україні.</p>
     </div>
     <div class="mq"><div class="mq-t"><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ VINNITSA STUNT TEAM ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ VINNITSA STUNT TEAM ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ VINNITSA STUNT TEAM ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ VINNITSA STUNT TEAM ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ VINNITSA STUNT TEAM ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ VINNITSA STUNT TEAM ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ VINNITSA STUNT TEAM ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ VINNITSA STUNT TEAM ✦ </span></div></div>
     <div class="mq rev"><div class="mq-t"><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span></div></div>
-    <h2>Каталог</h2>
-    <p class="sub">Обери товар і натисни «Замовити».</p>
+    <h2 data-ed="h2c">Каталог</h2>
+    <p class="sub" data-ed="subc">Обери товар і натисни «Замовити».</p>
     <div id="list"></div>
   </section>
 
   <section id="ads" class="on">
-    <h2>Реклама</h2>
-    <p class="sub">Розмістимо вашу рекламу в нашому Telegram-каналі та TikTok.</p>
+    <h2 data-ed="h2a">Реклама</h2>
+    <p class="sub" data-ed="suba">Розмістимо вашу рекламу в нашому Telegram-каналі та TikTok.</p>
     <div class="card">
       <ul class="dots">
-        <li>Жива активна аудиторія</li>
-        <li>Пости в каналі та розсилка в боті</li>
-        <li>Інтеграції у відео</li>
+        <li data-ed="li1">Жива активна аудиторія</li>
+        <li data-ed="li2">Пости в каналі та розсилка в боті</li>
+        <li data-ed="li3">Інтеграції у відео</li>
       </ul>
-      <a class="btn full" id="adBtn" href="#">Замовити рекламу</a>
+      <a class="btn full" id="adBtn" data-ed="adbtn" href="#">Замовити рекламу</a>
     </div>
     <div id="adlist"></div>
   </section>
 
   <section id="channels" class="on">
-    <h2>Канали</h2>
-    <p class="sub">Підписуйся на нас, щоб не пропустити нові відео та трюки.</p>
+    <h2 data-ed="h2h">Канали</h2>
+    <p class="sub" data-ed="subh">Підписуйся на нас, щоб не пропустити нові відео та трюки.</p>
     <div class="card">
       <div class="big"><svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></div>
-      <div class="cap">G2HST</div>
+      <div class="cap" data-ed="ycap">G2HST</div>
       <div class="cnt" id="ytCnt" hidden><b data-n="0">0</b> підписників</div>
-      <a class="btn full" id="ytBtn" href="#">Відкрити YouTube</a>
+      <a class="btn full" id="ytBtn" data-ed="ybtn" href="#">Відкрити YouTube</a>
     </div>
     <div class="card">
       <div class="big"><svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></div>
-      <div class="cap">YT:G2HST #VST</div>
+      <div class="cap" data-ed="tcap">YT:G2HST #VST</div>
       <div class="cnt" id="ttCnt" hidden><b data-n="0">0</b> підписників</div>
-      <a class="btn full" id="ttBtn" href="#">Відкрити TikTok</a>
+      <a class="btn full" id="ttBtn" data-ed="tbtn" href="#">Відкрити TikTok</a>
     </div>
-    <div class="vhead"><h3>Нові відео</h3></div>
-    <div id="videos"></div>
+    <div class="vhead"><h3 data-ed="vh">Нові відео</h3></div>
+    <div id="videos"></div><div id="chAdm"></div>
     <div class="card">
       <a class="link" id="mgr" href="#" style="margin-top:0">Менеджер замовлень <span id="mgrName"></span></a>
     </div>
@@ -418,6 +419,7 @@ header{background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-
 <button class="gear" id="gear" aria-label="Налаштування"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 01-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 010-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 014 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 010 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></button>
 <div class="pop" id="pop"><div class="row"><span>Liquid Glass</span><button class="sw" id="sw" role="switch" aria-checked="true" aria-label="Liquid Glass"></button></div>
 <div class="row" id="devRow" hidden><span>Developer</span><button class="sw" id="devSw" role="switch" aria-checked="false" aria-label="Developer"></button></div>
+<div class="row" id="thRow" hidden><span>Оформлення</span><button class="btn" id="thBtn" style="padding:8px 14px;font-size:11px">Змінити</button></div>
 <div class="row" id="mtRow" hidden><span>Технічні роботи</span><button class="sw" id="mtSw" role="switch" aria-checked="false" aria-label="Технічні роботи"></button></div></div>
 <div class="sheet" id="sheet"><div class="panel" id="panel"></div></div>
 
@@ -465,7 +467,7 @@ const A=()=>isAdmin&&devOn;
 function applyCatalog(){
   const list=[];
   BUILTIN.forEach(b=>{ const o=OVR[b.id]||{}; const p=Object.assign({},b);
-    if(o.price) p.price=o.price; if(o.out!==undefined) p.out=!!o.out; if(o.hide){ if(!A()) return; p.hidden=true; }
+    if(o.name) p.name=o.name; if(o.desc!==undefined&&o.desc!=="") p.desc=o.desc; if(o.price) p.price=o.price; if(o.out!==undefined) p.out=!!o.out; if(o.hide){ if(!A()) return; p.hidden=true; }
     list.push(p); });
   EXTRA.forEach(x=>list.push({id:x.id,name:x.name,price:x.price,desc:x.desc,out:x.out,img:x.img,custom:true}));
   CFG.products=list; renderCatalog();
@@ -477,7 +479,7 @@ function renderCatalog(){
   ${p.colors?`<div class="cols">${p.colors.map((c,i)=>`<button type="button" class="col ${i?"":"on"}" data-p="${p.id}" data-c="${c.id}"><i style="background:${c.dot}"></i>${c.name}</button>`).join("")}</div>`:""}
   ${p.hidden?`<div class="row"><div class="out">Приховано від покупців</div></div>`:p.out?`<div class="row"><div class="out">Немає в наявності</div></div>`:`<div class="row"><div class="price">${p.price}<small>грн</small></div>
   <button class="btn" data-id="${p.id}">Замовити →</button></div>`}
-  ${A()?`<div class="adm-row">${p.hidden?`<button type="button" class="adm-b" data-act="unhide" data-id="${p.id}">Повернути в каталог</button>`:`<button type="button" class="adm-b" data-act="stock" data-id="${p.id}">${p.out?"Є в наявності":"Немає в наявності"}</button><button type="button" class="adm-b" data-act="price" data-id="${p.id}">Ціна</button><button type="button" class="adm-b del" data-act="del" data-id="${p.id}">Видалити</button>`}</div>`:""}</div></div>`).join("")
+  ${A()?`<div class="adm-row">${p.hidden?`<button type="button" class="adm-b" data-act="unhide" data-id="${p.id}">Повернути в каталог</button>`:`<button type="button" class="adm-b" data-act="stock" data-id="${p.id}">${p.out?"Є в наявності":"Немає в наявності"}</button><button type="button" class="adm-b" data-act="price" data-id="${p.id}">Редагувати</button><button type="button" class="adm-b del" data-act="del" data-id="${p.id}">Видалити</button>`}</div>`:""}</div></div>`).join("")
   + (A()?`<div class="prod adm"><div class="pb"><button class="btn full" data-act="add">＋ Додати товар</button><p class="adm-note">Бачиш лише ти. Іншим цих кнопок немає.</p></div></div>`:"");
   if(renderCatalog.n++) $("#list").querySelectorAll(".prod").forEach(e=>e.classList.add("in"));
 }
@@ -584,15 +586,19 @@ async function send(){
 })();
 
 // ---- videos ----
-const VIDEOS=[{id:"mcNwyRxjl68",title:"Первое видео HST перевернул маятник"}];
-(function(){
+let VIDEOS=[{id:"mcNwyRxjl68",title:"Первое видео HST перевернул маятник"}];
+function renderVideos(){
   const el=document.getElementById("videos");
   el.innerHTML=VIDEOS.map((v,i)=>`<a class="vcard" href="https://youtu.be/${v.id}" data-id="${v.id}">
     <div class="vth" style="background-image:url(https://i.ytimg.com/vi/${v.id}/hqdefault.jpg)"><div class="pl"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
-    <div class="vb"><small>ВІДЕО #${i+1}</small><h4 data-id="${v.id}">${v.title||"Відео #"+(i+1)}</h4></div></a>`).join("");
+    <div class="vb"><small>ВІДЕО #${i+1}</small><h4 data-id="${v.id}">${v.title||"Відео #"+(i+1)}</h4>${A()?`<button type="button" class="adm-b del" data-vdel="${v.id}" style="margin-top:8px">Прибрати відео</button>`:""}</div></a>`).join("");
+  document.getElementById("chAdm").innerHTML=A()?`<div class="card adm"><button class="btn full" id="vAdd">＋ Додати відео</button><button class="btn full" id="stEdit" style="margin-top:10px">Змінити кількість підписників</button><p class="adm-note">Бачиш лише ти.</p></div>`:"";
+  const va=document.getElementById("vAdd"); if(va) va.onclick=openAddVid; const se=document.getElementById("stEdit"); if(se) se.onclick=openStats;
   VIDEOS.forEach(v=>{ if(v.title) return; fetch("video?id="+v.id).then(r=>r.json()).then(x=>{ if(x&&x.title){ const h=el.querySelector('h4[data-id="'+v.id+'"]'); if(h){ h.style.opacity=0; setTimeout(()=>{h.textContent=x.title; h.style.opacity=1},200);} } }).catch(()=>{}); });
-  el.onclick=e=>{const a=e.target.closest(".vcard"); if(!a) return; e.preventDefault(); open_("https://youtu.be/"+a.dataset.id)};
-})();
+  el.onclick=e=>{const d=e.target.closest("[data-vdel]"); if(d){ e.preventDefault(); ask("Прибрати це відео?",()=>adminCall("admin/viddel",{id:d.dataset.vdel})); return; }
+    const a=e.target.closest(".vcard"); if(!a) return; e.preventDefault(); open_("https://youtu.be/"+a.dataset.id)};
+}
+renderVideos();
 // ---- subscriber counters ----
 function countTo(box,n){
   const b=box.querySelector("b"); box.hidden=false; const t0=performance.now(), d=1400;
@@ -607,11 +613,13 @@ document.getElementById("nav").addEventListener("click",e=>{const b=e.target.clo
 
 function syncDev(){
   const dr=document.getElementById("devRow"), mr=document.getElementById("mtRow"); if(!dr) return;
-  dr.hidden=!isAdmin; mr.hidden=!(isAdmin&&devOn);
+  dr.hidden=!isAdmin; mr.hidden=!(isAdmin&&devOn); document.getElementById("thRow").hidden=mr.hidden;
+  document.querySelectorAll("[data-ed]").forEach(el=>el.classList.toggle("edt",A()));
   const d=document.getElementById("devSw"), m=document.getElementById("mtSw");
   d.classList.toggle("on",devOn); d.setAttribute("aria-checked",devOn); m.classList.toggle("on",MAINT); m.setAttribute("aria-checked",MAINT);
 }
-document.getElementById("devSw").onclick=e=>{ e.stopPropagation(); devOn=!devOn; try{localStorage.setItem("dev",devOn?"1":"0")}catch(x){} syncDev(); applyCatalog(); renderAds(); };
+document.getElementById("devSw").onclick=e=>{ e.stopPropagation(); devOn=!devOn; try{localStorage.setItem("dev",devOn?"1":"0")}catch(x){} syncDev(); applyCatalog(); renderAds(); renderVideos(); };
+document.getElementById("thBtn").onclick=e=>{ e.stopPropagation(); openTheme(); };
 document.getElementById("mtSw").onclick=e=>{ e.stopPropagation(); const on=!MAINT;
   ask(on?"Закрити магазин на технічні роботи? Клієнти побачать «Технічні роботи».":"Відкрити магазин для клієнтів?",()=>adminCall("admin/maint",{on})); };
 // ---- glass toggle ----
@@ -683,9 +691,9 @@ function confetti(){
 
 // ---- admin: manage products (only ADMIN_ID, checked on the server) ----
 function post(url,body){ return fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({initData:(tg&&tg.initData)||""},body))}).then(r=>r.json().catch(()=>({ok:false})).then(j=>Object.assign({status:r.status},j))); }
-function applyState(j){ EXTRA=j.items||[]; OVR=j.ov||{}; ADS=j.ads||[]; if(j.maint!==undefined) MAINT=!!j.maint; applyCatalog(); renderAds(); syncDev(); }
-fetch("products").then(r=>r.json()).then(j=>{ if((j.items&&j.items.length)||(j.ov&&Object.keys(j.ov).length)||(j.ads&&j.ads.length)) applyState(j); }).catch(()=>{});
-post("me",{}).then(j=>{ if(j.admin){ isAdmin=true; MAINT=!!j.maint; applyCatalog(); renderAds(); syncDev(); } }).catch(()=>{});
+function applyState(j){ EXTRA=j.items||[]; OVR=j.ov||{}; ADS=j.ads||[]; if(j.maint!==undefined) MAINT=!!j.maint; if(j.videos){ VIDEOS=j.videos; renderVideos(); } if(j.texts){ TXT=j.texts; applyTexts(); } if(j.theme){ THEMEV=j.theme; applyTheme(); } if(j.stats){ stats=j.stats; if(document.getElementById("ytCnt").hidden===false) showStats(); } applyCatalog(); renderAds(); syncDev(); }
+fetch("products").then(r=>r.json()).then(j=>{ if(j&&j.items) applyState(j); }).catch(()=>{});
+post("me",{}).then(j=>{ if(j.admin){ isAdmin=true; MAINT=!!j.maint; applyCatalog(); renderAds(); renderVideos(); syncDev(); } }).catch(()=>{});
 function ask(msg,yes){ if(tg&&tg.showConfirm) tg.showConfirm(msg,ok=>{ if(ok) yes(); }); else if(confirm(msg)) yes(); }
 async function adminCall(url,body){ const j=await post(url,body); if(j.ok) applyState(j); else{ const m=j.error||"Помилка"; if(tg&&tg.showAlert) tg.showAlert(m); else alert(m); } return j; }
 function adminAct(b){
@@ -693,7 +701,7 @@ function adminAct(b){
   if(act==="add") return openAdd();
   if(act==="stock") return adminCall("admin/set",{id,out:!p.out});
   if(act==="unhide") return adminCall("admin/set",{id,hide:0});
-  if(act==="price") return openPrice(p);
+  if(act==="price") return openEdit(p);
   if(act==="del") return ask(p.custom?"Видалити цей товар назавжди?":"Прибрати товар з каталогу? (його можна повернути)",()=>adminCall("admin/del",{id}));
 }
 function openPrice(p){
@@ -764,6 +772,76 @@ function openAddAd(){
     const j=await post("admin/adadd",{title,url,desc:$("#d_desc").value.trim(),image:adImg});
     if(j.ok){ applyState(j); closeSheet(); if(tg&&tg.HapticFeedback) tg.HapticFeedback.notificationOccurred("success"); }
     else{ er.textContent=j.error||"Помилка"; er.style.display="block"; $("#d_ok").disabled=false; $("#d_ok").textContent="Додати рекламу"; } };
+}
+let TXT={}, THEMEV={};
+function setEd(el,t){
+  if(el.dataset.ed==="logo"){ const w=t.split(" "); el.innerHTML="<b>"+esc(w[0])+"</b> "+esc(w.slice(1).join(" ")); } else el.textContent=t; }
+function applyTexts(){ document.querySelectorAll("[data-ed]").forEach(el=>{
+  if(el.dataset.def===undefined) el.dataset.def=el.dataset.ed==="logo"?"VST SHOP":el.textContent;
+  setEd(el,TXT[el.dataset.ed]||el.dataset.def); }); }
+function applyTheme(){
+  let st=document.getElementById("themeCss"); if(!st){ st=document.createElement("style"); st.id="themeCss"; document.head.appendChild(st); }
+  const t=THEMEV||{}; let c="";
+  if(t.bg) c+='.bgimg{background-image:url("'+t.bg+'")!important}';
+  if(t.dim!=null&&t.dim!=="") c+=':root:not([data-theme="light"]) .bgimg::after{background:rgba(12,11,16,'+(t.dim/100)+')!important}';
+  if(t.a||t.b) c+=':root{'+(t.a?'--accent:'+t.a+';':'')+(t.b?'--accent2:'+t.b+';':'')+'}';
+  st.textContent=c; }
+document.addEventListener("click",e=>{ if(!A()) return; if(e.target.closest("#sheet,#pop,#gear")) return;
+  const el=e.target.closest("[data-ed]"); if(!el) return; e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation(); openText(el.dataset.ed,el); },true);
+function openText(key,el){
+  const cur=TXT[key]||el.dataset.def||el.textContent;
+  $("#panel").innerHTML=`<button class="close" onclick="closeSheet()">✕</button><h3>Змінити текст</h3><div class="sum">Побачать усі користувачі.</div>
+  <textarea id="t_val" rows="3" maxlength="200">${esc(cur)}</textarea><div class="err" id="t_err"></div>
+  <button class="btn full" style="margin-top:16px" id="t_ok">Зберегти</button><button class="adm-b del" style="margin-top:10px;width:100%" id="t_rs">Повернути стандартний</button>`;
+  $("#sheet").classList.add("on");
+  const save=async v=>{ const j=await post("admin/text",{key,text:v}); if(j.ok){ applyState(j); closeSheet(); } else{ const er=$("#t_err"); er.textContent=j.error||"Помилка"; er.style.display="block"; } };
+  $("#t_ok").onclick=()=>{ const v=$("#t_val").value.trim(); save(v===el.dataset.def?"":v); }; $("#t_rs").onclick=()=>save(""); }
+function openEdit(p){
+  $("#panel").innerHTML=`<button class="close" onclick="closeSheet()">✕</button><h3>Редагувати товар</h3>
+  <label>Назва</label><input id="e_name" maxlength="60" value="${esc(p.name)}">
+  <label>Опис</label><textarea id="e_desc" rows="2" maxlength="140">${esc(p.desc||"")}</textarea>
+  <label>Ціна, грн</label><input id="e_price" type="number" inputmode="numeric" value="${p.price}">
+  <div class="err" id="e_err"></div><button class="btn full" style="margin-top:16px" id="e_ok">Зберегти</button>`;
+  $("#sheet").classList.add("on");
+  $("#e_ok").onclick=async()=>{ const v=parseInt($("#e_price").value,10); if(!v||v<1){ $("#e_err").textContent="Вкажи ціну."; $("#e_err").style.display="block"; return; }
+    $("#e_ok").disabled=true; const j=await adminCall("admin/set",{id:p.id,name:$("#e_name").value,desc:$("#e_desc").value,price:v}); if(j.ok) closeSheet(); else $("#e_ok").disabled=false; };
+}
+let thImg="";
+function openTheme(){
+  thImg=""; const t=THEMEV||{}, dim=t.dim!=null&&t.dim!==""?t.dim:30, ca=t.a||"#8b5cf6", cb=t.b||"#c084fc";
+  $("#panel").innerHTML=`<button class="close" onclick="closeSheet()">✕</button><h3>Оформлення</h3><div class="sum">Фон і кольори для всіх користувачів.</div>
+  <label>Задній фон (фото)</label><input id="th_file" type="file" accept="image/*"><img id="th_prev" alt="" style="display:none;width:100%;border-radius:14px;margin-top:10px">
+  <label>Затемнення фону: <span id="th_dv">${dim}</span>%</label><input id="th_dim" type="range" min="0" max="90" value="${dim}">
+  <label>Колір 1</label><input id="th_a" type="color" value="${ca}" style="height:44px;padding:4px">
+  <label>Колір 2</label><input id="th_b" type="color" value="${cb}" style="height:44px;padding:4px">
+  <div class="err" id="th_err"></div><button class="btn full" style="margin-top:16px" id="th_ok">Зберегти</button>
+  <button class="adm-b del" style="margin-top:10px;width:100%" id="th_rs">Скинути оформлення до стандартного</button>`;
+  $("#sheet").classList.add("on");
+  $("#th_dim").oninput=e=>{ $("#th_dv").textContent=e.target.value; };
+  $("#th_file").onchange=e=>{ const f=e.target.files[0]; if(!f) return; const im=new Image(), u=URL.createObjectURL(f);
+    im.onload=()=>{ const k=Math.min(1,1600/Math.max(im.width,im.height)), c=document.createElement("canvas"); c.width=im.width*k; c.height=im.height*k; c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+      thImg=c.toDataURL("image/jpeg",.82); const pv=$("#th_prev"); pv.src=thImg; pv.style.display="block"; URL.revokeObjectURL(u); }; im.src=u; };
+  $("#th_ok").onclick=async()=>{ $("#th_ok").disabled=true; const j=await post("admin/theme",{image:thImg,dim:$("#th_dim").value,a:$("#th_a").value,b:$("#th_b").value});
+    if(j.ok){ applyState(j); closeSheet(); } else{ const er=$("#th_err"); er.textContent=j.error||"Помилка"; er.style.display="block"; $("#th_ok").disabled=false; } };
+  $("#th_rs").onclick=()=>ask("Скинути фон і кольори до стандартних?",async()=>{ const j=await post("admin/theme",{reset:true}); if(j.ok){ applyState(j); closeSheet(); } });
+}
+function openAddVid(){
+  $("#panel").innerHTML=`<button class="close" onclick="closeSheet()">✕</button><h3>Нове відео</h3><div class="sum">Встав посилання на YouTube. Назва підтягнеться сама.</div>
+  <label>Посилання</label><input id="v_url" placeholder="https://youtu.be/..." autocapitalize="off" autocorrect="off">
+  <div class="err" id="v_err"></div><button class="btn full" style="margin-top:16px" id="v_ok">Додати відео</button>`;
+  $("#sheet").classList.add("on");
+  $("#v_ok").onclick=async()=>{ const url=$("#v_url").value.trim(); $("#v_ok").disabled=true;
+    const j=await post("admin/vidadd",{url});
+    if(j.ok){ applyState(j); closeSheet(); } else{ const er=$("#v_err"); er.textContent=j.error||"Помилка"; er.style.display="block"; $("#v_ok").disabled=false; } };
+}
+function openStats(){
+  $("#panel").innerHTML=`<button class="close" onclick="closeSheet()">✕</button><h3>Підписники</h3><div class="sum">Порожнє поле = автоматичне значення.</div>
+  <label>YouTube</label><input id="s_y" inputmode="numeric" value="${stats&&stats.youtube!=null?stats.youtube:""}">
+  <label>TikTok</label><input id="s_t" inputmode="numeric" value="${stats&&stats.tiktok!=null?stats.tiktok:""}">
+  <div class="err" id="s_err"></div><button class="btn full" style="margin-top:16px" id="s_ok">Зберегти</button>`;
+  $("#sheet").classList.add("on");
+  $("#s_ok").onclick=async()=>{ $("#s_ok").disabled=true; const j=await post("admin/stats",{yt:$("#s_y").value,tt:$("#s_t").value});
+    if(j.ok){ applyState(j); closeSheet(); } else{ const er=$("#s_err"); er.textContent=j.error||"Помилка"; er.style.display="block"; $("#s_ok").disabled=false; } };
 }
 renderAds();
 </script>

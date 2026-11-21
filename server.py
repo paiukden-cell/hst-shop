@@ -25,6 +25,11 @@ MST = {"on": os.environ.get("MAINTENANCE", "").strip().lower() in ("1", "true", 
 YT_SUBS = os.environ.get("YT_SUBS", "")
 TT_FOLLOWERS = os.environ.get("TT_FOLLOWERS", "")
 _cache = {"t": 0, "yt": None}
+VID_DEFAULT = [{"id": "mcNwyRxjl68", "title": "Первое видео HST перевернул маятник"}]
+VIDS = [dict(v) for v in VID_DEFAULT]
+TXT = {}   # edited texts {key: text}
+THEME = {}  # {"bg": file_id, "dim": 0-90, "a": "#hex", "b": "#hex"}
+SOV = {}   # manual subscriber overrides: {"y": n, "t": n}
 YOUTUBE = os.environ.get("YOUTUBE", "https://youtube.com/@g2hst?si=qaQ2cwDuvmlo11iv")
 API = f"https://api.telegram.org/bot{TOKEN}"
 
@@ -130,7 +135,7 @@ def is_admin(init_data):
 
 
 def _dump():
-    return DATA_HEAD + "\n" + json.dumps({"c": CUSTOM, "o": OV, "a": ADS, "m": 1 if MST["on"] else 0}, ensure_ascii=False, separators=(",", ":"))
+    return DATA_HEAD + "\n" + json.dumps({"c": CUSTOM, "o": OV, "a": ADS, "m": 1 if MST["on"] else 0, "v": VIDS, "s": SOV, "t": TXT, "th": THEME}, ensure_ascii=False, separators=(",", ":"))
 
 
 def store_load():
@@ -144,6 +149,14 @@ def store_load():
             d = json.loads(text.split("\n", 1)[1])
             CUSTOM[:] = d.get("c", [])
             ADS[:] = d.get("a", [])
+            if "v" in d:
+                VIDS[:] = d["v"]
+            TXT.clear()
+            TXT.update(d.get("t", {}))
+            THEME.clear()
+            THEME.update(d.get("th", {}))
+            SOV.clear()
+            SOV.update(d.get("s", {}))
             if "m" in d:
                 MST["on"] = bool(d["m"])
             OV.clear()
@@ -211,12 +224,18 @@ def get_photo(fid):
     return data
 
 
+def stats_now():
+    return {"youtube": SOV["y"] if "y" in SOV else youtube_subs(),
+            "tiktok": SOV["t"] if "t" in SOV else to_int(TT_FOLLOWERS)}
+
+
 def catalog_state():
     items = [{"id": p["id"], "name": p["name"], "price": p["price"], "desc": p.get("desc", ""),
               "out": bool(p.get("out")), "img": "photo?id=" + p["photo"]} for p in CUSTOM]
     ads = [{"id": a["id"], "title": a["title"], "desc": a.get("desc", ""), "url": a["url"],
             "img": ("photo?id=" + a["photo"]) if a.get("photo") else ""} for a in ADS]
-    return {"items": items, "ov": OV, "ads": ads, "maint": MST["on"]}
+    return {"items": items, "ov": OV, "ads": ads, "maint": MST["on"], "videos": VIDS, "stats": stats_now(), "texts": TXT,
+            "theme": {"bg": ("photo?id=" + THEME["bg"]) if THEME.get("bg") else "", "dim": THEME.get("dim"), "a": THEME.get("a"), "b": THEME.get("b")}}
 
 
 MAINT_TEXT = "🛠 Технічні роботи\n\nМагазин тимчасово закритий. Скоро повернемось — дякуємо за терпіння!"
@@ -269,7 +288,7 @@ class H(SimpleHTTPRequestHandler):
         if path == "/photo":
             q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
             fid = (q.get("id") or [""])[0]
-            if not any(p.get("photo") == fid for p in CUSTOM + ADS):
+            if not any(p.get("photo") == fid for p in CUSTOM + ADS + [{"photo": THEME.get("bg", "-")}]):
                 return self._json({"ok": False}, 404)
             data = get_photo(fid)
             if not data:
@@ -283,7 +302,7 @@ class H(SimpleHTTPRequestHandler):
             self._cc = "no-cache, must-revalidate"
             return
         if path == "/stats":
-            return self._json({"youtube": youtube_subs(), "tiktok": to_int(TT_FOLLOWERS)})
+            return self._json(stats_now())
         if path == "/config":
             return self._json({"manager": MANAGER, "tiktok": TIKTOK, "youtube": YOUTUBE, "jar": JAR})
         if MST["on"] and path in ("/", "/index.html"):
@@ -308,7 +327,7 @@ class H(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         path = self.path.split("?")[0]
-        if path in ("/me", "/admin/add", "/admin/del", "/admin/set", "/admin/adadd", "/admin/addel", "/admin/maint"):
+        if path in ("/me", "/admin/add", "/admin/del", "/admin/set", "/admin/adadd", "/admin/addel", "/admin/maint", "/admin/vidadd", "/admin/viddel", "/admin/stats", "/admin/text", "/admin/theme"):
             return self._admin(path)
         if path != "/order":
             return self._json({"ok": False}, 404)
@@ -400,6 +419,69 @@ class H(SimpleHTTPRequestHandler):
                 if not store_save():
                     ADS.pop()
                     return self._json({"ok": False, "error": "Не вдалось зберегти (забагато даних). Прибери зайве."}, 500)
+            elif path == "/admin/vidadd":
+                m = re.search(r"(?:youtu\.be/|v=|shorts/|embed/)([A-Za-z0-9_-]{11})", str(d.get("url", ""))) or re.fullmatch(r"\s*([A-Za-z0-9_-]{11})\s*", str(d.get("url", "")))
+                if not m:
+                    return self._json({"ok": False, "error": "Встав посилання на YouTube відео"}, 400)
+                if len(VIDS) >= 12:
+                    return self._json({"ok": False, "error": "Забагато відео (максимум 12)"}, 400)
+                vid = m.group(1)
+                if any(v["id"] == vid for v in VIDS):
+                    return self._json({"ok": False, "error": "Це відео вже додано"}, 400)
+                VIDS.insert(0, {"id": vid})
+                store_save()
+            elif path == "/admin/viddel":
+                VIDS[:] = [v for v in VIDS if v["id"] != str(d.get("id", ""))]
+                store_save()
+            elif path == "/admin/stats":
+                for k, f in (("y", "yt"), ("t", "tt")):
+                    if str(d.get(f, "")).strip() == "":
+                        SOV.pop(k, None)
+                    else:
+                        n = to_int(d.get(f))
+                        if n is None or not (0 <= n < 1_000_000_000):
+                            return self._json({"ok": False, "error": "Вкажи число"}, 400)
+                        SOV[k] = n
+                store_save()
+            elif path == "/admin/text":
+                key = str(d.get("key", ""))
+                if not re.fullmatch(r"[a-z0-9_]{1,24}", key):
+                    return self._json({"ok": False, "error": "Погане поле"}, 400)
+                txt = str(d.get("text", "")).strip()[:200]
+                if txt:
+                    TXT[key] = txt
+                else:
+                    TXT.pop(key, None)
+                if not store_save():
+                    TXT.pop(key, None)
+                    return self._json({"ok": False, "error": "Не вдалось зберегти (забагато змін)"}, 500)
+            elif path == "/admin/theme":
+                if d.get("reset"):
+                    THEME.clear()
+                else:
+                    if d.get("nobg"):
+                        THEME.pop("bg", None)
+                    img = d.get("image", "")
+                    if img:
+                        try:
+                            jpeg = base64.b64decode(img.split(",", 1)[1] if "," in img else img)
+                        except Exception:
+                            return self._json({"ok": False, "error": "Погане фото"}, 400)
+                        if len(jpeg) > 3_000_000:
+                            return self._json({"ok": False, "error": "Фото завелике (до 3 МБ)"}, 400)
+                        fid = upload_photo(jpeg, "Фон магазину")
+                        if not fid:
+                            return self._json({"ok": False, "error": "Не вдалось завантажити фото"}, 502)
+                        THEME["bg"] = fid
+                    if d.get("dim") not in (None, ""):
+                        n = to_int(d.get("dim"))
+                        if n is not None and 0 <= n <= 95:
+                            THEME["dim"] = n
+                    for k in ("a", "b"):
+                        v = str(d.get(k, ""))
+                        if re.fullmatch(r"#[0-9a-fA-F]{6}", v):
+                            THEME[k] = v
+                store_save()
             elif path == "/admin/maint":
                 MST["on"] = bool(d.get("on"))
                 store_save()
@@ -428,6 +510,12 @@ class H(SimpleHTTPRequestHandler):
                             tgt["out"] = 1
                         else:
                             tgt["out"] = 0
+                    for fld, ln in (("name", 60), ("desc", 140)):
+                        if fld in d:
+                            v = str(d[fld]).strip()[:ln]
+                            if fld == "name" and len(v) < 2:
+                                return self._json({"ok": False, "error": "Назва закоротка"}, 400)
+                            tgt[fld] = v
                     if "price" in d:
                         pr = to_int(d["price"])
                         if not pr or not (0 < pr < 1_000_000):
