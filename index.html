@@ -343,6 +343,13 @@ header{background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-
 @keyframes adL{from{background-position:0% 0}to{background-position:100% 0}}
 @keyframes adR{from{background-position:100% 0}to{background-position:0% 0}}
 [data-ed].edt{outline:1.5px dashed var(--accent2);outline-offset:3px;border-radius:6px;cursor:pointer}
+section[hidden],nav button[hidden]{display:none!important}.cb{margin-bottom:14px}.cb h3{margin:0 0 6px;font-size:18px}.cb p{margin:0;white-space:pre-wrap;color:var(--muted);line-height:1.5}
+.cb img.ci{width:100%;border-radius:18px;display:block}.cb .cap2{font-size:12px;color:var(--muted);margin-top:6px}
+.cb.sp{height:24px}.tbe{margin-top:6px}.bed{border:1px solid var(--line);border-radius:14px;padding:10px;margin-top:10px;background:var(--card)}
+.bed small{color:var(--accent2);font-weight:700;letter-spacing:1px;font-size:10px;text-transform:uppercase}.bed .bt{display:flex;gap:6px;margin-top:8px}
+.bed .bt button{flex:1;padding:8px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-weight:700}
+.adc{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.adc button{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card2);color:var(--text);font-weight:700;font-size:12px}
+.adc .btn{padding:9px 12px}
 .adcard{margin-top:14px}
 .adimg{width:100%;aspect-ratio:5/3;object-fit:cover;border-radius:14px;background:#000;display:block;margin-bottom:12px}
 .adcard h3{margin:0 0 6px;font-size:18px}.addesc{margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.45}
@@ -358,9 +365,9 @@ header{background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-
     <button class="theme" id="theme">☀</button>
   </div>
   <nav id="nav">
-    <button data-t="catalog" class="on">Каталог</button>
-    <button data-t="ads">Реклама</button>
-    <button data-t="channels">Канали</button>
+    <button data-t="catalog" class="on" data-ed="n1">Каталог</button>
+    <button data-t="ads" data-ed="n2">Реклама</button>
+    <button data-t="channels" data-ed="n3">Канали</button>
   </nav>
   <i class="prog" id="prog"></i>
 </header>
@@ -419,6 +426,7 @@ header{background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-
 <button class="gear" id="gear" aria-label="Налаштування"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 01-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 010-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 014 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 010 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></button>
 <div class="pop" id="pop"><div class="row"><span>Liquid Glass</span><button class="sw" id="sw" role="switch" aria-checked="true" aria-label="Liquid Glass"></button></div>
 <div class="row" id="devRow" hidden><span>Developer</span><button class="sw" id="devSw" role="switch" aria-checked="false" aria-label="Developer"></button></div>
+<div class="row" id="tbRow" hidden><span>Вкладки</span><button class="btn" id="tbBtn" style="padding:8px 14px;font-size:11px">Керувати</button></div>
 <div class="row" id="thRow" hidden><span>Оформлення</span><button class="btn" id="thBtn" style="padding:8px 14px;font-size:11px">Змінити</button></div>
 <div class="row" id="mtRow" hidden><span>Технічні роботи</span><button class="sw" id="mtSw" role="switch" aria-checked="false" aria-label="Технічні роботи"></button></div></div>
 <div class="sheet" id="sheet"><div class="panel" id="panel"></div></div>
@@ -447,15 +455,15 @@ $("#theme").onclick=()=>{
 
 // feed: all sections in one scroll, nav follows scroll
 (function(){
-  const nav=$("#nav"), hd=document.querySelector("header"), secs=[...document.querySelectorAll("section")]; let lock=0;
+  const nav=$("#nav"), hd=document.querySelector("header"), secs=()=>[...document.querySelectorAll("section:not([hidden])")]; let lock=0;
   function setActive(id){ nav.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x.dataset.t===id)); }
   nav.onclick=e=>{ const b=e.target.closest("button"); if(!b) return; const t=document.getElementById(b.dataset.t); if(!t) return;
     lock=Date.now(); setActive(b.dataset.t);
     if(b.dataset.t==="catalog") scrollTo({top:0,behavior:"smooth"}); else t.scrollIntoView({behavior:"smooth",block:"start"}); };
   let tk=false;
-  function spy(){ tk=false; if(Date.now()-lock<900) return; const y=hd.offsetHeight+40; let cur=secs[0].id;
-    secs.forEach(s=>{ if(s.getBoundingClientRect().top<=y) cur=s.id; });
-    if(innerHeight+scrollY>=document.documentElement.scrollHeight-6) cur=secs[secs.length-1].id; setActive(cur); }
+  function spy(){ tk=false; if(Date.now()-lock<900) return; const y=hd.offsetHeight+40; const SS=secs(); let cur=SS[0].id;
+    SS.forEach(s=>{ if(s.getBoundingClientRect().top<=y) cur=s.id; });
+    if(innerHeight+scrollY>=document.documentElement.scrollHeight-6) cur=SS[SS.length-1].id; setActive(cur); }
   addEventListener("scroll",()=>{ if(!tk){ tk=true; requestAnimationFrame(spy); } },{passive:true});
   addEventListener("scroll",()=>{ lock=lock&&Date.now()-lock<900?lock:0; },{passive:true});
 })();
@@ -613,13 +621,14 @@ document.getElementById("nav").addEventListener("click",e=>{const b=e.target.clo
 
 function syncDev(){
   const dr=document.getElementById("devRow"), mr=document.getElementById("mtRow"); if(!dr) return;
-  dr.hidden=!isAdmin; mr.hidden=!(isAdmin&&devOn); document.getElementById("thRow").hidden=mr.hidden;
+  dr.hidden=!isAdmin; mr.hidden=!(isAdmin&&devOn); document.getElementById("thRow").hidden=mr.hidden; document.getElementById("tbRow").hidden=mr.hidden;
   document.querySelectorAll("[data-ed]").forEach(el=>el.classList.toggle("edt",A()));
   const d=document.getElementById("devSw"), m=document.getElementById("mtSw");
   d.classList.toggle("on",devOn); d.setAttribute("aria-checked",devOn); m.classList.toggle("on",MAINT); m.setAttribute("aria-checked",MAINT);
 }
-document.getElementById("devSw").onclick=e=>{ e.stopPropagation(); devOn=!devOn; try{localStorage.setItem("dev",devOn?"1":"0")}catch(x){} syncDev(); applyCatalog(); renderAds(); renderVideos(); };
+document.getElementById("devSw").onclick=e=>{ e.stopPropagation(); devOn=!devOn; try{localStorage.setItem("dev",devOn?"1":"0")}catch(x){} syncDev(); applyCatalog(); renderAds(); renderVideos(); renderTabs(); };
 document.getElementById("thBtn").onclick=e=>{ e.stopPropagation(); openTheme(); };
+document.getElementById("tbBtn").onclick=e=>{ e.stopPropagation(); openTabs(); };
 document.getElementById("mtSw").onclick=e=>{ e.stopPropagation(); const on=!MAINT;
   ask(on?"Закрити магазин на технічні роботи? Клієнти побачать «Технічні роботи».":"Відкрити магазин для клієнтів?",()=>adminCall("admin/maint",{on})); };
 // ---- glass toggle ----
@@ -691,9 +700,9 @@ function confetti(){
 
 // ---- admin: manage products (only ADMIN_ID, checked on the server) ----
 function post(url,body){ return fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({initData:(tg&&tg.initData)||""},body))}).then(r=>r.json().catch(()=>({ok:false})).then(j=>Object.assign({status:r.status},j))); }
-function applyState(j){ EXTRA=j.items||[]; OVR=j.ov||{}; ADS=j.ads||[]; if(j.maint!==undefined) MAINT=!!j.maint; if(j.videos){ VIDEOS=j.videos; renderVideos(); } if(j.texts){ TXT=j.texts; applyTexts(); } if(j.theme){ THEMEV=j.theme; applyTheme(); } if(j.stats){ stats=j.stats; if(document.getElementById("ytCnt").hidden===false) showStats(); } applyCatalog(); renderAds(); syncDev(); }
+function applyState(j){ EXTRA=j.items||[]; OVR=j.ov||{}; ADS=j.ads||[]; if(j.maint!==undefined) MAINT=!!j.maint; if(j.videos){ VIDEOS=j.videos; renderVideos(); } if(j.tabs){ TABS=j.tabs; HIDEV=j.hide||[]; renderTabs(); } if(j.texts){ TXT=j.texts; applyTexts(); } if(j.theme){ THEMEV=j.theme; applyTheme(); } if(j.stats){ stats=j.stats; if(document.getElementById("ytCnt").hidden===false) showStats(); } applyCatalog(); renderAds(); syncDev(); }
 fetch("products").then(r=>r.json()).then(j=>{ if(j&&j.items) applyState(j); }).catch(()=>{});
-post("me",{}).then(j=>{ if(j.admin){ isAdmin=true; MAINT=!!j.maint; applyCatalog(); renderAds(); renderVideos(); syncDev(); } }).catch(()=>{});
+post("me",{}).then(j=>{ if(j.admin){ isAdmin=true; MAINT=!!j.maint; applyCatalog(); renderAds(); renderVideos(); renderTabs(); syncDev(); } }).catch(()=>{});
 function ask(msg,yes){ if(tg&&tg.showConfirm) tg.showConfirm(msg,ok=>{ if(ok) yes(); }); else if(confirm(msg)) yes(); }
 async function adminCall(url,body){ const j=await post(url,body); if(j.ok) applyState(j); else{ const m=j.error||"Помилка"; if(tg&&tg.showAlert) tg.showAlert(m); else alert(m); } return j; }
 function adminAct(b){
@@ -773,7 +782,24 @@ function openAddAd(){
     if(j.ok){ applyState(j); closeSheet(); if(tg&&tg.HapticFeedback) tg.HapticFeedback.notificationOccurred("success"); }
     else{ er.textContent=j.error||"Помилка"; er.style.display="block"; $("#d_ok").disabled=false; $("#d_ok").textContent="Додати рекламу"; } };
 }
-let TXT={}, THEMEV={};
+let TXT={}, THEMEV={}, TABS=[], HIDEV=[];
+function renderTabs(){
+  const nav=document.getElementById("nav"), main=document.querySelector("main");
+  document.querySelectorAll("section.ctab,#nav .ctb").forEach(x=>x.remove());
+  ["catalog","ads","channels"].forEach(id=>{ const hid=HIDEV.includes(id); const s=document.getElementById(id); if(s) s.hidden=hid; const b=nav.querySelector('[data-t="'+id+'"]'); if(b) b.hidden=hid&&!A()?true:hid; });
+  TABS.forEach(t=>{
+    const b=document.createElement("button"); b.className="ctb"; b.dataset.t="ct_"+t.id; b.textContent=t.title; nav.appendChild(b);
+    const s=document.createElement("section"); s.id="ct_"+t.id; s.className="on ctab";
+    s.innerHTML='<h2>'+esc(t.title)+'</h2>'+t.blocks.map(bl=>{
+      if(bl.type==="text") return '<div class="card cb">'+(bl.h?'<h3>'+esc(bl.h)+'</h3>':'')+(bl.p?'<p>'+esc(bl.p)+'</p>':'')+'</div>';
+      if(bl.type==="image") return '<div class="cb"><img class="ci" src="'+esc(bl.img)+'" alt="">'+(bl.p?'<div class="cap2">'+esc(bl.p)+'</div>':'')+'</div>';
+      if(bl.type==="button") return '<div class="cb"><a class="btn full" href="#" data-go="'+esc(bl.url)+'">'+esc(bl.label)+'</a></div>';
+      if(bl.type==="video") return '<a class="vcard cb" href="#" data-go="https://youtu.be/'+esc(bl.vid)+'"><div class="vth" style="background-image:url(https://i.ytimg.com/vi/'+esc(bl.vid)+'/hqdefault.jpg)"><div class="pl"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div></a>';
+      return '<div class="cb sp"></div>'; }).join("")+(A()?'<div class="tbe"><button class="btn full" data-edtab="'+t.id+'">Редагувати вкладку</button></div>':"");
+    s.onclick=e=>{ const g=e.target.closest("[data-go]"); if(g){ e.preventDefault(); open_(g.dataset.go); return; } const ed=e.target.closest("[data-edtab]"); if(ed) openTabEdit(ed.dataset.edtab); };
+    main.appendChild(s); });
+  const g=document.getElementById("nav"); }
+
 function setEd(el,t){
   if(el.dataset.ed==="logo"){ const w=t.split(" "); el.innerHTML="<b>"+esc(w[0])+"</b> "+esc(w.slice(1).join(" ")); } else el.textContent=t; }
 function applyTexts(){ document.querySelectorAll("[data-ed]").forEach(el=>{
@@ -824,6 +850,47 @@ function openTheme(){
   $("#th_ok").onclick=async()=>{ $("#th_ok").disabled=true; const j=await post("admin/theme",{image:thImg,dim:$("#th_dim").value,a:$("#th_a").value,b:$("#th_b").value});
     if(j.ok){ applyState(j); closeSheet(); } else{ const er=$("#th_err"); er.textContent=j.error||"Помилка"; er.style.display="block"; $("#th_ok").disabled=false; } };
   $("#th_rs").onclick=()=>ask("Скинути фон і кольори до стандартних?",async()=>{ const j=await post("admin/theme",{reset:true}); if(j.ok){ applyState(j); closeSheet(); } });
+}
+function openTabs(){
+  const row=(id,t,hid)=>`<div class="bed"><b>${esc(t)}</b><div class="bt"><button data-hide="${id}">${hid?"Показати":"Сховати"}</button></div></div>`;
+  $("#panel").innerHTML=`<button class="close" onclick="closeSheet()">✕</button><h3>Вкладки</h3><div class="sum">Назви вкладок міняються тапом по них у режимі Developer.</div>
+  ${[["catalog","Каталог"],["ads","Реклама"],["channels","Канали"]].map(x=>row(x[0],x[1],HIDEV.includes(x[0]))).join("")}
+  ${TABS.map(t=>`<div class="bed"><b>${esc(t.title)}</b><div class="bt"><button data-ed2="${t.id}">Редагувати</button><button data-del2="${t.id}">Видалити</button></div></div>`).join("")}
+  <button class="btn full" style="margin-top:16px" id="tbNew">＋ Нова вкладка</button>`;
+  $("#sheet").classList.add("on");
+  $("#panel").onclick=async e=>{ const hd=e.target.closest("[data-hide]"), ed=e.target.closest("[data-ed2]"), dl=e.target.closest("[data-del2]");
+    if(hd){ const id=hd.dataset.hide; const j=await post("admin/hide",{id,on:!HIDEV.includes(id)}); if(j.ok){ applyState(j); openTabs(); } }
+    else if(ed) openTabEdit(ed.dataset.ed2);
+    else if(dl) ask("Видалити вкладку?",async()=>{ const j=await post("admin/tabs",{tabs:TABS.filter(t=>t.id!==dl.dataset.del2).map(cleanTab)}); if(j.ok){ applyState(j); openTabs(); } }); };
+  $("#tbNew").onclick=()=>openTabEdit(null);
+}
+const cleanTab=t=>({id:t.id,title:t.title,blocks:t.blocks.map(b=>{ const o=Object.assign({},b); delete o.img; return o; })});
+function openTabEdit(id){
+  const src=TABS.find(t=>t.id===id); const T=src?JSON.parse(JSON.stringify(cleanTab(src))):{id:"",title:"",blocks:[]};
+  const draw=()=>{
+    $("#panel").innerHTML=`<button class="close" onclick="closeSheet()">✕</button><h3>${src?"Редагувати вкладку":"Нова вкладка"}</h3>
+    <label>Назва вкладки</label><input id="tb_t" maxlength="30" value="${esc(T.title)}">
+    ${T.blocks.map((b,i)=>`<div class="bed" data-i="${i}"><small>${{text:"Текст",image:"Фото",button:"Кнопка",video:"Відео",space:"Відступ"}[b.type]}</small>
+      ${b.type==="text"?`<input data-f="h" placeholder="Заголовок" maxlength="80" value="${esc(b.h||"")}"><textarea data-f="p" rows="3" maxlength="600" placeholder="Текст">${esc(b.p||"")}</textarea>`:""}
+      ${b.type==="image"?`<input type="file" accept="image/*" data-file="1">${b.data?`<img src="${b.data}" style="width:100%;border-radius:12px;margin-top:8px">`:(b.photo?`<img src="photo?id=${esc(b.photo)}" style="width:100%;border-radius:12px;margin-top:8px">`:"")}<input data-f="p" placeholder="Підпис (необов'язково)" maxlength="120" value="${esc(b.p||"")}">`:""}
+      ${b.type==="button"?`<input data-f="label" placeholder="Текст кнопки" maxlength="40" value="${esc(b.label||"")}"><input data-f="url" placeholder="https://... або @нік" autocapitalize="off" value="${esc(b.url||"")}">`:""}
+      ${b.type==="video"?`<input data-f="url" placeholder="Посилання на YouTube" autocapitalize="off" value="${esc(b.url||(b.vid?"https://youtu.be/"+b.vid:""))}">`:""}
+      <div class="bt"><button data-mv="-1">↑</button><button data-mv="1">↓</button><button data-rm="1">✕</button></div></div>`).join("")}
+    <div class="adc">${[["text","＋ Текст"],["image","＋ Фото"],["button","＋ Кнопка"],["video","＋ Відео"],["space","＋ Відступ"]].map(x=>`<button data-add="${x[0]}">${x[1]}</button>`).join("")}</div>
+    <div class="err" id="tb_err"></div><button class="btn full" style="margin-top:16px" id="tb_ok">Зберегти вкладку</button>`;
+    $("#sheet").classList.add("on");
+    const sync=()=>{ T.title=$("#tb_t").value; $("#panel").querySelectorAll(".bed[data-i]").forEach(el=>{ const b=T.blocks[+el.dataset.i]; el.querySelectorAll("[data-f]").forEach(f=>{ b[f.dataset.f]=f.value; }); }); };
+    $("#panel").onclick=e=>{ const add=e.target.closest("[data-add]"), bed=e.target.closest(".bed[data-i]"), mv=e.target.closest("[data-mv]"), rm=e.target.closest("[data-rm]");
+      if(add){ sync(); T.blocks.push({type:add.dataset.add}); draw(); }
+      else if(bed&&mv){ sync(); const i=+bed.dataset.i, j=i+ +mv.dataset.mv; if(j>=0&&j<T.blocks.length){ [T.blocks[i],T.blocks[j]]=[T.blocks[j],T.blocks[i]]; } draw(); }
+      else if(bed&&rm){ sync(); T.blocks.splice(+bed.dataset.i,1); draw(); } };
+    $("#panel").onchange=e=>{ const f=e.target.closest("[data-file]"); if(!f||!f.files[0]) return; sync(); const bed=f.closest(".bed"), b=T.blocks[+bed.dataset.i]; const im=new Image(), u=URL.createObjectURL(f.files[0]);
+      im.onload=()=>{ const k=Math.min(1,1200/Math.max(im.width,im.height)), c=document.createElement("canvas"); c.width=im.width*k; c.height=im.height*k; c.getContext("2d").drawImage(im,0,0,c.width,c.height); b.data=c.toDataURL("image/jpeg",.82); URL.revokeObjectURL(u); draw(); }; im.src=u; };
+    $("#tb_ok").onclick=async()=>{ sync(); const er=$("#tb_err"); if(!T.title.trim()){ er.textContent="Вкажи назву вкладки."; er.style.display="block"; return; }
+      $("#tb_ok").disabled=true; const list=TABS.map(cleanTab); const ix=list.findIndex(t=>t.id===T.id); if(ix>=0) list[ix]=T; else list.push(T);
+      const j=await post("admin/tabs",{tabs:list}); if(j.ok){ applyState(j); closeSheet(); } else{ er.textContent=j.error||"Помилка"; er.style.display="block"; $("#tb_ok").disabled=false; } };
+  };
+  draw();
 }
 function openAddVid(){
   $("#panel").innerHTML=`<button class="close" onclick="closeSheet()">✕</button><h3>Нове відео</h3><div class="sum">Встав посилання на YouTube. Назва підтягнеться сама.</div>

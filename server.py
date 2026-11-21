@@ -29,6 +29,8 @@ VID_DEFAULT = [{"id": "mcNwyRxjl68", "title": "Первое видео HST пе�
 VIDS = [dict(v) for v in VID_DEFAULT]
 TXT = {}   # edited texts {key: text}
 THEME = {}  # {"bg": file_id, "dim": 0-90, "a": "#hex", "b": "#hex"}
+TABS = []   # custom tabs [{id,title,blocks:[...]}]
+HIDE = []   # hidden built-in tabs
 SOV = {}   # manual subscriber overrides: {"y": n, "t": n}
 YOUTUBE = os.environ.get("YOUTUBE", "https://youtube.com/@g2hst?si=qaQ2cwDuvmlo11iv")
 API = f"https://api.telegram.org/bot{TOKEN}"
@@ -135,7 +137,7 @@ def is_admin(init_data):
 
 
 def _dump():
-    return DATA_HEAD + "\n" + json.dumps({"c": CUSTOM, "o": OV, "a": ADS, "m": 1 if MST["on"] else 0, "v": VIDS, "s": SOV, "t": TXT, "th": THEME}, ensure_ascii=False, separators=(",", ":"))
+    return DATA_HEAD + "\n" + json.dumps({"c": CUSTOM, "o": OV, "a": ADS, "m": 1 if MST["on"] else 0, "v": VIDS, "s": SOV, "t": TXT, "th": THEME, "tb": TABS, "hd": HIDE}, ensure_ascii=False, separators=(",", ":"))
 
 
 def store_load():
@@ -144,6 +146,15 @@ def store_load():
     r = tg("getChat", chat_id=ADMIN_ID)
     pm = (r.get("result") or {}).get("pinned_message") or {}
     text = pm.get("text") or ""
+    doc = pm.get("document")
+    if doc and str(pm.get("caption", "")).startswith(DATA_HEAD):
+        try:
+            fi = tg("getFile", file_id=doc["file_id"])
+            with urllib.request.urlopen(f"https://api.telegram.org/file/bot{TOKEN}/{fi['result']['file_path']}", timeout=40) as f:
+                text = f.read().decode("utf-8")
+            _st["kind"] = "doc"
+        except Exception as e:
+            print("store_load doc error", e)
     if text.startswith(DATA_HEAD):
         try:
             d = json.loads(text.split("\n", 1)[1])
@@ -155,6 +166,8 @@ def store_load():
             TXT.update(d.get("t", {}))
             THEME.clear()
             THEME.update(d.get("th", {}))
+            TABS[:] = d.get("tb", [])
+            HIDE[:] = d.get("hd", [])
             SOV.clear()
             SOV.update(d.get("s", {}))
             if "m" in d:
@@ -168,11 +181,34 @@ def store_load():
             print("store_load error", e)
 
 
+def send_doc(text):
+    b = "----vstdoc"
+    body = (f'--{b}\r\nContent-Disposition: form-data; name="chat_id"\r\n\r\n{ADMIN_ID}\r\n'
+            f'--{b}\r\nContent-Disposition: form-data; name="caption"\r\n\r\n{DATA_HEAD}\r\n'
+            f'--{b}\r\nContent-Disposition: form-data; name="document"; filename="vst-data.json"\r\nContent-Type: application/json\r\n\r\n').encode() \
+           + text.encode("utf-8") + f"\r\n--{b}--\r\n".encode()
+    req = urllib.request.Request(f"{API}/sendDocument", body, {"Content-Type": f"multipart/form-data; boundary={b}"})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            j = json.load(r)
+        return j["result"]["message_id"] if j.get("ok") else None
+    except Exception as e:
+        print("send_doc error", e)
+        return None
+
+
 def store_save():
     text = _dump()
-    if len(text) > 4000:
-        return False
     if text == _st["last"]:
+        return True
+    if len(text) > 3900 or _st.get("kind") == "doc":
+        mid = send_doc(text)
+        if not mid:
+            return False
+        tg("pinChatMessage", chat_id=ADMIN_ID, message_id=mid, disable_notification=True)
+        if _st["mid"]:
+            tg("deleteMessage", chat_id=ADMIN_ID, message_id=_st["mid"])
+        _st["mid"], _st["last"], _st["kind"] = mid, text, "doc"
         return True
     if _st["mid"]:
         r = tg("editMessageText", chat_id=ADMIN_ID, message_id=_st["mid"], text=text)
@@ -234,7 +270,7 @@ def catalog_state():
               "out": bool(p.get("out")), "img": "photo?id=" + p["photo"]} for p in CUSTOM]
     ads = [{"id": a["id"], "title": a["title"], "desc": a.get("desc", ""), "url": a["url"],
             "img": ("photo?id=" + a["photo"]) if a.get("photo") else ""} for a in ADS]
-    return {"items": items, "ov": OV, "ads": ads, "maint": MST["on"], "videos": VIDS, "stats": stats_now(), "texts": TXT,
+    return {"items": items, "ov": OV, "ads": ads, "maint": MST["on"], "tabs": [{"id": t["id"], "title": t["title"], "blocks": [dict(b, img=("photo?id=" + b["photo"]) if b.get("photo") else "") for b in t["blocks"]]} for t in TABS], "hide": HIDE, "videos": VIDS, "stats": stats_now(), "texts": TXT,
             "theme": {"bg": ("photo?id=" + THEME["bg"]) if THEME.get("bg") else "", "dim": THEME.get("dim"), "a": THEME.get("a"), "b": THEME.get("b")}}
 
 
@@ -288,7 +324,7 @@ class H(SimpleHTTPRequestHandler):
         if path == "/photo":
             q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
             fid = (q.get("id") or [""])[0]
-            if not any(p.get("photo") == fid for p in CUSTOM + ADS + [{"photo": THEME.get("bg", "-")}]):
+            if not any(p.get("photo") == fid for p in CUSTOM + ADS + [{"photo": THEME.get("bg", "-")}] + [b for t in TABS for b in t["blocks"]]):
                 return self._json({"ok": False}, 404)
             data = get_photo(fid)
             if not data:
@@ -327,7 +363,7 @@ class H(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         path = self.path.split("?")[0]
-        if path in ("/me", "/admin/add", "/admin/del", "/admin/set", "/admin/adadd", "/admin/addel", "/admin/maint", "/admin/vidadd", "/admin/viddel", "/admin/stats", "/admin/text", "/admin/theme"):
+        if path in ("/me", "/admin/add", "/admin/del", "/admin/set", "/admin/adadd", "/admin/addel", "/admin/maint", "/admin/vidadd", "/admin/viddel", "/admin/stats", "/admin/text", "/admin/theme", "/admin/tabs", "/admin/hide"):
             return self._admin(path)
         if path != "/order":
             return self._json({"ok": False}, 404)
@@ -482,6 +518,76 @@ class H(SimpleHTTPRequestHandler):
                         if re.fullmatch(r"#[0-9a-fA-F]{6}", v):
                             THEME[k] = v
                 store_save()
+            elif path == "/admin/hide":
+                i = str(d.get("id", ""))
+                if i in ("catalog", "ads", "channels"):
+                    if d.get("on") and i not in HIDE:
+                        HIDE.append(i)
+                    if not d.get("on") and i in HIDE:
+                        HIDE.remove(i)
+                    store_save()
+            elif path == "/admin/tabs":
+                old = {b["id"]: b for t in TABS for b in t["blocks"] if b.get("id")}
+                new = []
+                for t in list(d.get("tabs", []))[:8]:
+                    title = str(t.get("title", "")).strip()[:30]
+                    if len(title) < 1:
+                        continue
+                    tid = str(t.get("id", ""))
+                    if not re.fullmatch(r"[a-z0-9]{1,16}", tid):
+                        tid = "t" + format(int(time.time() * 1000) % 10**9, "x") + str(len(new))
+                    blocks = []
+                    for b in list(t.get("blocks", []))[:30]:
+                        ty = str(b.get("type", ""))
+                        if ty not in ("text", "image", "button", "video", "space"):
+                            continue
+                        bid = str(b.get("id", ""))
+                        if not re.fullmatch(r"[a-z0-9]{1,16}", bid):
+                            bid = "b" + format(int(time.time() * 1000000) % 10**11, "x") + str(len(blocks))
+                        nb = {"id": bid, "type": ty}
+                        if ty == "text":
+                            nb["h"] = str(b.get("h", "")).strip()[:80]
+                            nb["p"] = str(b.get("p", "")).strip()[:600]
+                        elif ty == "button":
+                            u = str(b.get("url", "")).strip()[:150]
+                            if u.startswith("@"):
+                                u = "https://t.me/" + u[1:]
+                            elif u.lower().startswith("t.me/"):
+                                u = "https://" + u
+                            if not re.match(r"https?://[^\s]+\.[^\s]+", u):
+                                return self._json({"ok": False, "error": "Кнопка: вкажи посилання https://… або @нік"}, 400)
+                            nb["label"] = str(b.get("label", "")).strip()[:40] or "Відкрити"
+                            nb["url"] = u
+                        elif ty == "video":
+                            m = re.search(r"(?:youtu\.be/|v=|shorts/|embed/)([A-Za-z0-9_-]{11})", str(b.get("url", ""))) or re.fullmatch(r"\s*([A-Za-z0-9_-]{11})\s*", str(b.get("url", b.get("vid", ""))))
+                            if not m:
+                                return self._json({"ok": False, "error": "Відео: встав посилання на YouTube"}, 400)
+                            nb["vid"] = m.group(1)
+                        elif ty == "image":
+                            nb["p"] = str(b.get("p", "")).strip()[:120]
+                            img = b.get("data", "")
+                            if img:
+                                try:
+                                    jpeg = base64.b64decode(img.split(",", 1)[1] if "," in img else img)
+                                except Exception:
+                                    return self._json({"ok": False, "error": "Погане фото"}, 400)
+                                if len(jpeg) > 3_000_000:
+                                    return self._json({"ok": False, "error": "Фото завелике (до 3 МБ)"}, 400)
+                                fid = upload_photo(jpeg, "Вкладка: " + title)
+                                if not fid:
+                                    return self._json({"ok": False, "error": "Не вдалось завантажити фото"}, 502)
+                                nb["photo"] = fid
+                            elif old.get(bid, {}).get("photo"):
+                                nb["photo"] = old[bid]["photo"]
+                            else:
+                                return self._json({"ok": False, "error": "Додай фото до блоку «Фото»"}, 400)
+                        blocks.append(nb)
+                    new.append({"id": tid, "title": title, "blocks": blocks})
+                prev = TABS[:]
+                TABS[:] = new
+                if not store_save():
+                    TABS[:] = prev
+                    return self._json({"ok": False, "error": "Не вдалось зберегти (забагато даних)"}, 500)
             elif path == "/admin/maint":
                 MST["on"] = bool(d.get("on"))
                 store_save()
