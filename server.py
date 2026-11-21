@@ -110,6 +110,7 @@ def esc(s):
 # ---------- products managed by the admin from inside the Mini App ----------
 # Saved in a pinned message in the admin's chat with the bot, so it survives restarts on free hosting.
 CUSTOM = []      # products the admin added
+ADS = []         # partner shops / ads the admin added to the "Реклама" tab
 OV = {}          # overrides for built-in products: {id: {"out":1,"hide":1,"price":350}}
 _st = {"mid": None, "last": ""}
 LOCK = threading.Lock()
@@ -129,7 +130,7 @@ def is_admin(init_data):
 
 
 def _dump():
-    return DATA_HEAD + "\n" + json.dumps({"c": CUSTOM, "o": OV}, ensure_ascii=False, separators=(",", ":"))
+    return DATA_HEAD + "\n" + json.dumps({"c": CUSTOM, "o": OV, "a": ADS}, ensure_ascii=False, separators=(",", ":"))
 
 
 def store_load():
@@ -142,6 +143,7 @@ def store_load():
         try:
             d = json.loads(text.split("\n", 1)[1])
             CUSTOM[:] = d.get("c", [])
+            ADS[:] = d.get("a", [])
             OV.clear()
             OV.update(d.get("o", {}))
             _st["mid"] = pm.get("message_id")
@@ -210,7 +212,9 @@ def get_photo(fid):
 def catalog_state():
     items = [{"id": p["id"], "name": p["name"], "price": p["price"], "desc": p.get("desc", ""),
               "out": bool(p.get("out")), "img": "photo?id=" + p["photo"]} for p in CUSTOM]
-    return {"items": items, "ov": OV}
+    ads = [{"id": a["id"], "title": a["title"], "desc": a.get("desc", ""), "url": a["url"],
+            "img": ("photo?id=" + a["photo"]) if a.get("photo") else ""} for a in ADS]
+    return {"items": items, "ov": OV, "ads": ads}
 
 
 MAINT_TEXT = "🛠 Технічні роботи\n\nМагазин тимчасово закритий. Скоро повернемось — дякуємо за терпіння!"
@@ -257,7 +261,7 @@ class H(SimpleHTTPRequestHandler):
         if path == "/photo":
             q = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query)
             fid = (q.get("id") or [""])[0]
-            if not any(p["photo"] == fid for p in CUSTOM):
+            if not any(p.get("photo") == fid for p in CUSTOM + ADS):
                 return self._json({"ok": False}, 404)
             data = get_photo(fid)
             if not data:
@@ -296,7 +300,7 @@ class H(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         path = self.path.split("?")[0]
-        if path in ("/me", "/admin/add", "/admin/del", "/admin/set"):
+        if path in ("/me", "/admin/add", "/admin/del", "/admin/set", "/admin/adadd", "/admin/addel"):
             return self._admin(path)
         if path != "/order":
             return self._json({"ok": False}, 404)
@@ -357,6 +361,43 @@ class H(SimpleHTTPRequestHandler):
                 if not store_save():
                     CUSTOM.pop()
                     return self._json({"ok": False, "error": "Не вдалось зберегти (забагато даних)"}, 500)
+            elif path == "/admin/adadd":
+                title = str(d.get("title", "")).strip()[:50]
+                desc = str(d.get("desc", "")).strip()[:120]
+                url = str(d.get("url", "")).strip()[:120]
+                if url.startswith("@"):
+                    url = "https://t.me/" + url[1:]
+                elif url.lower().startswith("t.me/"):
+                    url = "https://" + url
+                if len(title) < 2 or not re.match(r"https?://[^\s]+\.[^\s]+", url):
+                    return self._json({"ok": False, "error": "Вкажи назву і посилання (https://… або @нік)"}, 400)
+                if len(ADS) >= 8:
+                    return self._json({"ok": False, "error": "Забагато реклами (максимум 8). Прибери зайву."}, 400)
+                fid = None
+                img = d.get("image", "")
+                if img:
+                    try:
+                        jpeg = base64.b64decode(img.split(",", 1)[1] if "," in img else img)
+                    except Exception:
+                        return self._json({"ok": False, "error": "Погане фото"}, 400)
+                    if len(jpeg) > 3_000_000:
+                        return self._json({"ok": False, "error": "Фото завелике (до 3 МБ)"}, 400)
+                    fid = upload_photo(jpeg, f"Реклама: {title}")
+                    if not fid:
+                        return self._json({"ok": False, "error": "Не вдалось завантажити фото"}, 502)
+                ad = {"id": "a" + format(int(time.time() * 1000), "x"), "title": title, "desc": desc, "url": url}
+                if fid:
+                    ad["photo"] = fid
+                ADS.append(ad)
+                if not store_save():
+                    ADS.pop()
+                    return self._json({"ok": False, "error": "Не вдалось зберегти (забагато даних). Прибери зайве."}, 500)
+            elif path == "/admin/addel":
+                aid = str(d.get("id", ""))
+                n = len(ADS)
+                ADS[:] = [a for a in ADS if a["id"] != aid]
+                if len(ADS) != n:
+                    store_save()
             else:
                 pid = str(d.get("id", ""))
                 if not re.fullmatch(r"[A-Za-z0-9_]{1,24}", pid):
@@ -392,6 +433,27 @@ class H(SimpleHTTPRequestHandler):
                     return self._json({"ok": False, "error": "Не вдалось зберегти"}, 500)
         return self._json(dict(catalog_state(), ok=True))
 
+def setup_profile():
+    if os.environ.get("AUTO_PROFILE", "1") == "0":
+        return
+    try:
+        tg("setMyName", name="VST SHOP")
+        tg("setMyDescription", description="Офіційний магазин Vinnitsa Stunt Team. Таблички, брелки та стікерпаки з доставкою по Україні.")
+        tg("setMyShortDescription", short_description="Офіційний магазин VST · Vinnitsa Stunt Team")
+        p = ROOT / "avatar.jpg"
+        if p.exists():
+            b = "----vstb"
+            body = (f"--{b}\r\nContent-Disposition: form-data; name=\"photo\"\r\n\r\n"
+                    '{"type":"static","photo":"attach://p"}\r\n'
+                    f"--{b}\r\nContent-Disposition: form-data; name=\"p\"; filename=\"a.jpg\"\r\nContent-Type: image/jpeg\r\n\r\n").encode() \
+                   + p.read_bytes() + f"\r\n--{b}--\r\n".encode()
+            rq = urllib.request.Request(f"https://api.telegram.org/bot{TOKEN}/setMyProfilePhoto", data=body,
+                                        headers={"Content-Type": f"multipart/form-data; boundary={b}"})
+            print("setMyProfilePhoto:", urllib.request.urlopen(rq, timeout=30).read()[:200])
+    except Exception as e:
+        print("setup_profile:", e)
+
+
 def poll():
     if not TOKEN:
         print("BOT_TOKEN is not set: web only")
@@ -399,6 +461,7 @@ def poll():
     tg("deleteWebhook")
     if WEBAPP_URL:
         tg("setChatMenuButton", menu_button={"type": "web_app", "text": "Shop", "web_app": {"url": WEBAPP_URL}})
+    setup_profile()
     offset = 0
     while True:
         r = tg("getUpdates", offset=offset, timeout=30)
@@ -414,7 +477,7 @@ def poll():
                 tg("sendMessage", chat_id=chat, text=MAINT_TEXT)
             elif txt.startswith("/start"):
                 kb = {"inline_keyboard": [[{"text": "Відкрити магазин", "web_app": {"url": WEBAPP_URL}}]]}
-                r2 = tg("sendPhoto", chat_id=chat, photo=f"{WEBAPP_URL}/banner.png", caption=WELCOME, reply_markup=kb)
+                r2 = tg("sendPhoto", chat_id=chat, photo=f"{WEBAPP_URL}/banner.png?v=2", caption=WELCOME, reply_markup=kb)
                 if not r2.get("ok"):
                     tg("sendMessage", chat_id=chat, text=WELCOME, reply_markup=kb)
             elif txt.startswith("/admin"):
