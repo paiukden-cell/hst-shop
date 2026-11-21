@@ -21,7 +21,7 @@ TIKTOK = os.environ.get("TIKTOK", "https://www.tiktok.com/@g2hst")
 JAR = os.environ.get("MONO_JAR", "")
 YT_KEY = os.environ.get("YOUTUBE_API_KEY", "")
 YT_HANDLE = os.environ.get("YT_HANDLE", "g2hst")
-MAINT = os.environ.get("MAINTENANCE", "").strip().lower() in ("1", "true", "on", "yes", "так")
+MST = {"on": os.environ.get("MAINTENANCE", "").strip().lower() in ("1", "true", "on", "yes", "так")}
 YT_SUBS = os.environ.get("YT_SUBS", "")
 TT_FOLLOWERS = os.environ.get("TT_FOLLOWERS", "")
 _cache = {"t": 0, "yt": None}
@@ -130,7 +130,7 @@ def is_admin(init_data):
 
 
 def _dump():
-    return DATA_HEAD + "\n" + json.dumps({"c": CUSTOM, "o": OV, "a": ADS}, ensure_ascii=False, separators=(",", ":"))
+    return DATA_HEAD + "\n" + json.dumps({"c": CUSTOM, "o": OV, "a": ADS, "m": 1 if MST["on"] else 0}, ensure_ascii=False, separators=(",", ":"))
 
 
 def store_load():
@@ -144,6 +144,8 @@ def store_load():
             d = json.loads(text.split("\n", 1)[1])
             CUSTOM[:] = d.get("c", [])
             ADS[:] = d.get("a", [])
+            if "m" in d:
+                MST["on"] = bool(d["m"])
             OV.clear()
             OV.update(d.get("o", {}))
             _st["mid"] = pm.get("message_id")
@@ -214,7 +216,7 @@ def catalog_state():
               "out": bool(p.get("out")), "img": "photo?id=" + p["photo"]} for p in CUSTOM]
     ads = [{"id": a["id"], "title": a["title"], "desc": a.get("desc", ""), "url": a["url"],
             "img": ("photo?id=" + a["photo"]) if a.get("photo") else ""} for a in ADS]
-    return {"items": items, "ov": OV, "ads": ads}
+    return {"items": items, "ov": OV, "ads": ads, "maint": MST["on"]}
 
 
 MAINT_TEXT = "🛠 Технічні роботи\n\nМагазин тимчасово закритий. Скоро повернемось — дякуємо за терпіння!"
@@ -227,7 +229,13 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 h1{font-size:24px;margin:6px 0 10px}p{color:#a8a3b8;font-size:15px;line-height:1.5;max-width:320px;margin:0}
 small{position:fixed;bottom:22px;font-size:10px;letter-spacing:3px;color:#6f6a80;font-weight:600}
 </style></head><body><div class="lg"><b>VST</b> SHOP</div><div class="g">⚙️</div><h1>Технічні роботи</h1>
-<p>Магазин тимчасово закритий. Скоро повернемось — дякуємо за терпіння!</p><small>#VST</small></body></html>"""
+<p>Магазин тимчасово закритий. Скоро повернемось — дякуємо за терпіння!</p><button id="ob" style="display:none;margin-top:26px;padding:14px 22px;border:0;border-radius:14px;background:linear-gradient(135deg,#8b5cf6,#e879f9);color:#fff;font-size:15px;font-weight:700">Відкрити магазин (developer)</button><small>#VST</small>
+<script src="https://telegram.org/js/telegram-web-app.js"></script><script>
+(function(){var t=window.Telegram&&Telegram.WebApp,i=t&&t.initData;if(!i)return;
+fetch("/me",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:i})}).then(function(r){return r.json()}).then(function(j){
+if(!j.admin)return;var b=document.getElementById("ob");b.style.display="inline-block";b.onclick=function(){
+fetch("/admin/maint",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({initData:i,on:false})}).then(function(){location.reload()})}}).catch(function(){})})();
+</script></body></html>"""
 
 
 class H(SimpleHTTPRequestHandler):
@@ -278,7 +286,7 @@ class H(SimpleHTTPRequestHandler):
             return self._json({"youtube": youtube_subs(), "tiktok": to_int(TT_FOLLOWERS)})
         if path == "/config":
             return self._json({"manager": MANAGER, "tiktok": TIKTOK, "youtube": YOUTUBE, "jar": JAR})
-        if MAINT and path in ("/", "/index.html"):
+        if MST["on"] and path in ("/", "/index.html"):
             b = MAINT_HTML.encode()
             self.send_response(200)
             self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -300,11 +308,11 @@ class H(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         path = self.path.split("?")[0]
-        if path in ("/me", "/admin/add", "/admin/del", "/admin/set", "/admin/adadd", "/admin/addel"):
+        if path in ("/me", "/admin/add", "/admin/del", "/admin/set", "/admin/adadd", "/admin/addel", "/admin/maint"):
             return self._admin(path)
         if path != "/order":
             return self._json({"ok": False}, 404)
-        if MAINT:
+        if MST["on"]:
             return self._json({"ok": False, "error": "maintenance"}, 503)
         try:
             d = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))))
@@ -333,7 +341,7 @@ class H(SimpleHTTPRequestHandler):
             return self._json({"ok": False}, 400)
         adm = is_admin(d.get("initData", ""))
         if path == "/me":
-            return self._json({"admin": adm})
+            return self._json({"admin": adm, "maint": MST["on"]})
         if not adm:
             return self._json({"ok": False, "error": "forbidden"}, 403)
         import base64, re
@@ -392,6 +400,9 @@ class H(SimpleHTTPRequestHandler):
                 if not store_save():
                     ADS.pop()
                     return self._json({"ok": False, "error": "Не вдалось зберегти (забагато даних). Прибери зайве."}, 500)
+            elif path == "/admin/maint":
+                MST["on"] = bool(d.get("on"))
+                store_save()
             elif path == "/admin/addel":
                 aid = str(d.get("id", ""))
                 n = len(ADS)
@@ -473,7 +484,12 @@ def poll():
             m = u.get("message") or {}
             txt = (m.get("text") or "").strip()
             chat = m.get("chat", {}).get("id")
-            if txt.startswith("/start") and MAINT:
+            if txt.startswith("/maint") and str(chat) == str(ADMIN_ID):
+                with LOCK:
+                    MST["on"] = not MST["on"]
+                    store_save()
+                tg("sendMessage", chat_id=chat, text="🛠 Технічні роботи: " + ("УВІМКНЕНО (магазин закритий)" if MST["on"] else "вимкнено (магазин відкритий)"))
+            elif txt.startswith("/start") and MST["on"]:
                 tg("sendMessage", chat_id=chat, text=MAINT_TEXT)
             elif txt.startswith("/start"):
                 kb = {"inline_keyboard": [[{"text": "Відкрити магазин", "web_app": {"url": WEBAPP_URL}}]]}

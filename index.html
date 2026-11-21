@@ -177,7 +177,7 @@ section.on .prod{animation:none}
 .gear.open{transform:rotate(120deg);opacity:1}
 .pop{position:fixed;right:14px;bottom:60px;z-index:41;min-width:210px;padding:12px 14px;border-radius:18px;background:var(--card);border:1px solid var(--line);
   box-shadow:0 14px 40px rgba(0,0,0,.45);display:none;flex-direction:column;gap:12px;font-size:14px;font-weight:700;transform-origin:bottom right}
-.pop .row{display:flex;align-items:center;justify-content:space-between;gap:14px}
+.pop .row[hidden]{display:none}.pop{flex-direction:column;gap:12px}.pop .row{display:flex;align-items:center;justify-content:space-between;gap:14px}
 .pop.on{display:flex;animation:pp2 .28s cubic-bezier(.2,.8,.2,1)}
 @keyframes pp2{from{opacity:0;transform:scale(.85) translateY(8px)}to{opacity:1;transform:none}}
 .sw{position:relative;width:46px;height:28px;border-radius:99px;border:1px solid var(--line);background:var(--card2);padding:0;flex:none;transition:background .25s}
@@ -335,6 +335,18 @@ header{background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-
 .adm-note{margin-top:10px;font-size:12px;color:var(--muted);text-align:center}
 .prod.adm{border-style:dashed}
 .prod.hid{opacity:.5}
+.adfx{position:relative;width:100%;aspect-ratio:1/1;border-radius:14px;overflow:hidden;background:#000;margin-bottom:12px}
+.adfx .adb{position:absolute;inset:0;background:url(ad_bg.jpg?v=1) 50% 0/130% 100% no-repeat}
+.adfx .adb.a{clip-path:inset(0 0 50% 0);animation:adL 9s ease-in-out infinite alternate}
+.adfx .adb.b{clip-path:inset(50% 0 0 0);animation:adR 9s ease-in-out infinite alternate}
+.adfx .adf{position:absolute;left:9.9%;top:41.2%;width:77%;height:auto;filter:drop-shadow(0 4px 14px rgba(0,0,0,.6))}
+@keyframes adL{from{background-position:0% 0}to{background-position:100% 0}}
+@keyframes adR{from{background-position:100% 0}to{background-position:0% 0}}
+.adcard{margin-top:14px}
+.adimg{width:100%;aspect-ratio:5/3;object-fit:cover;border-radius:14px;background:#000;display:block;margin-bottom:12px}
+.adcard h3{margin:0 0 6px;font-size:18px}.addesc{margin:0 0 14px;color:var(--muted);font-size:14px;line-height:1.45}
+.adrm{margin:12px 0 0}
+.card.adm{border-style:dashed;margin-top:14px}
 </style>
 </head>
 <body>
@@ -376,6 +388,7 @@ header{background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-
       </ul>
       <a class="btn full" id="adBtn" href="#">Замовити рекламу</a>
     </div>
+    <div id="adlist"></div>
   </section>
 
   <section id="channels" class="on">
@@ -403,7 +416,9 @@ header{background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-
 <footer class="hst">#VST</footer>
 
 <button class="gear" id="gear" aria-label="Налаштування"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 01-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 010-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 014 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 010 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></button>
-<div class="pop" id="pop"><div class="row"><span>Liquid Glass</span><button class="sw" id="sw" role="switch" aria-checked="true" aria-label="Liquid Glass"></button></div></div>
+<div class="pop" id="pop"><div class="row"><span>Liquid Glass</span><button class="sw" id="sw" role="switch" aria-checked="true" aria-label="Liquid Glass"></button></div>
+<div class="row" id="devRow" hidden><span>Developer</span><button class="sw" id="devSw" role="switch" aria-checked="false" aria-label="Developer"></button></div>
+<div class="row" id="mtRow" hidden><span>Технічні роботи</span><button class="sw" id="mtSw" role="switch" aria-checked="false" aria-label="Технічні роботи"></button></div></div>
 <div class="sheet" id="sheet"><div class="panel" id="panel"></div></div>
 
 <script>
@@ -445,11 +460,12 @@ $("#theme").onclick=()=>{
 
 // catalog
 const esc=t=>String(t==null?"":t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const BUILTIN=CFG.products.slice(); let isAdmin=false, OVR={}, EXTRA=[];
+const BUILTIN=CFG.products.slice(); let isAdmin=false, devOn=false, MAINT=false, OVR={}, EXTRA=[]; try{devOn=localStorage.getItem("dev")==="1"}catch(e){}
+const A=()=>isAdmin&&devOn;
 function applyCatalog(){
   const list=[];
   BUILTIN.forEach(b=>{ const o=OVR[b.id]||{}; const p=Object.assign({},b);
-    if(o.price) p.price=o.price; if(o.out!==undefined) p.out=!!o.out; if(o.hide){ if(!isAdmin) return; p.hidden=true; }
+    if(o.price) p.price=o.price; if(o.out!==undefined) p.out=!!o.out; if(o.hide){ if(!A()) return; p.hidden=true; }
     list.push(p); });
   EXTRA.forEach(x=>list.push({id:x.id,name:x.name,price:x.price,desc:x.desc,out:x.out,img:x.img,custom:true}));
   CFG.products=list; renderCatalog();
@@ -461,8 +477,8 @@ function renderCatalog(){
   ${p.colors?`<div class="cols">${p.colors.map((c,i)=>`<button type="button" class="col ${i?"":"on"}" data-p="${p.id}" data-c="${c.id}"><i style="background:${c.dot}"></i>${c.name}</button>`).join("")}</div>`:""}
   ${p.hidden?`<div class="row"><div class="out">Приховано від покупців</div></div>`:p.out?`<div class="row"><div class="out">Немає в наявності</div></div>`:`<div class="row"><div class="price">${p.price}<small>грн</small></div>
   <button class="btn" data-id="${p.id}">Замовити →</button></div>`}
-  ${isAdmin?`<div class="adm-row">${p.hidden?`<button type="button" class="adm-b" data-act="unhide" data-id="${p.id}">Повернути в каталог</button>`:`<button type="button" class="adm-b" data-act="stock" data-id="${p.id}">${p.out?"Є в наявності":"Немає в наявності"}</button><button type="button" class="adm-b" data-act="price" data-id="${p.id}">Ціна</button><button type="button" class="adm-b del" data-act="del" data-id="${p.id}">Видалити</button>`}</div>`:""}</div></div>`).join("")
-  + (isAdmin?`<div class="prod adm"><div class="pb"><button class="btn full" data-act="add">＋ Додати товар</button><p class="adm-note">Бачиш лише ти. Іншим цих кнопок немає.</p></div></div>`:"");
+  ${A()?`<div class="adm-row">${p.hidden?`<button type="button" class="adm-b" data-act="unhide" data-id="${p.id}">Повернути в каталог</button>`:`<button type="button" class="adm-b" data-act="stock" data-id="${p.id}">${p.out?"Є в наявності":"Немає в наявності"}</button><button type="button" class="adm-b" data-act="price" data-id="${p.id}">Ціна</button><button type="button" class="adm-b del" data-act="del" data-id="${p.id}">Видалити</button>`}</div>`:""}</div></div>`).join("")
+  + (A()?`<div class="prod adm"><div class="pb"><button class="btn full" data-act="add">＋ Додати товар</button><p class="adm-note">Бачиш лише ти. Іншим цих кнопок немає.</p></div></div>`:"");
   if(renderCatalog.n++) $("#list").querySelectorAll(".prod").forEach(e=>e.classList.add("in"));
 }
 renderCatalog.n=0;
@@ -589,6 +605,15 @@ function showStats(){ if(!stats) return;
   if(stats.tiktok!=null) countTo(document.getElementById("ttCnt"),stats.tiktok); }
 document.getElementById("nav").addEventListener("click",e=>{const b=e.target.closest("button"); if(b&&b.dataset.t==="channels"){ if(stats) showStats(); else setTimeout(showStats,700);} });
 
+function syncDev(){
+  const dr=document.getElementById("devRow"), mr=document.getElementById("mtRow"); if(!dr) return;
+  dr.hidden=!isAdmin; mr.hidden=!(isAdmin&&devOn);
+  const d=document.getElementById("devSw"), m=document.getElementById("mtSw");
+  d.classList.toggle("on",devOn); d.setAttribute("aria-checked",devOn); m.classList.toggle("on",MAINT); m.setAttribute("aria-checked",MAINT);
+}
+document.getElementById("devSw").onclick=e=>{ e.stopPropagation(); devOn=!devOn; try{localStorage.setItem("dev",devOn?"1":"0")}catch(x){} syncDev(); applyCatalog(); renderAds(); };
+document.getElementById("mtSw").onclick=e=>{ e.stopPropagation(); const on=!MAINT;
+  ask(on?"Закрити магазин на технічні роботи? Клієнти побачать «Технічні роботи».":"Відкрити магазин для клієнтів?",()=>adminCall("admin/maint",{on})); };
 // ---- glass toggle ----
 (function(){
   const root=document.documentElement, sw=document.getElementById('sw'), gear=document.getElementById('gear'), pop=document.getElementById('pop');
@@ -658,9 +683,9 @@ function confetti(){
 
 // ---- admin: manage products (only ADMIN_ID, checked on the server) ----
 function post(url,body){ return fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({initData:(tg&&tg.initData)||""},body))}).then(r=>r.json().catch(()=>({ok:false})).then(j=>Object.assign({status:r.status},j))); }
-function applyState(j){ EXTRA=j.items||[]; OVR=j.ov||{}; applyCatalog(); }
-fetch("products").then(r=>r.json()).then(j=>{ if((j.items&&j.items.length)||(j.ov&&Object.keys(j.ov).length)) applyState(j); }).catch(()=>{});
-post("me",{}).then(j=>{ if(j.admin){ isAdmin=true; applyCatalog(); } }).catch(()=>{});
+function applyState(j){ EXTRA=j.items||[]; OVR=j.ov||{}; ADS=j.ads||[]; if(j.maint!==undefined) MAINT=!!j.maint; applyCatalog(); renderAds(); syncDev(); }
+fetch("products").then(r=>r.json()).then(j=>{ if((j.items&&j.items.length)||(j.ov&&Object.keys(j.ov).length)||(j.ads&&j.ads.length)) applyState(j); }).catch(()=>{});
+post("me",{}).then(j=>{ if(j.admin){ isAdmin=true; MAINT=!!j.maint; applyCatalog(); renderAds(); syncDev(); } }).catch(()=>{});
 function ask(msg,yes){ if(tg&&tg.showConfirm) tg.showConfirm(msg,ok=>{ if(ok) yes(); }); else if(confirm(msg)) yes(); }
 async function adminCall(url,body){ const j=await post(url,body); if(j.ok) applyState(j); else{ const m=j.error||"Помилка"; if(tg&&tg.showAlert) tg.showAlert(m); else alert(m); } return j; }
 function adminAct(b){
@@ -701,6 +726,46 @@ function openAdd(){
     if(j.ok){ applyState(j); closeSheet(); if(tg&&tg.HapticFeedback) tg.HapticFeedback.notificationOccurred("success"); }
     else{ er.textContent=j.error||"Помилка"; er.style.display="block"; $("#a_ok").disabled=false; $("#a_ok").textContent="Додати в каталог"; } };
 }
+
+// ---- Реклама: partner shops added by the admin (button only for the admin) ----
+let ADS=[];
+function renderAds(){
+  const el=document.getElementById("adlist"); if(!el) return;
+  const FIX=`<div class="card adcard"><div class="adfx"><div class="adb a"></div><div class="adb b"></div><img class="adf" src="ad_fg.png?v=1" alt=""></div>
+    <h3>Alexov Shop</h3><p class="addesc">Alexov Shop - Магазин в якому ви можете купити якісні товари для своєї техніки @Alexov_Shop_bot</p>
+    <a class="btn full" href="https://t.me/Alexov_Shop_bot" data-url="https://t.me/Alexov_Shop_bot">Відкрити →</a></div>`;
+  el.innerHTML=FIX+ADS.map(a=>`<div class="card adcard">${a.img?`<img class="adimg" src="${esc(a.img)}" alt="">`:""}
+    <h3>${esc(a.title)}</h3>${a.desc?`<p class="addesc">${esc(a.desc)}</p>`:""}
+    <a class="btn full" href="${esc(a.url)}" data-url="${esc(a.url)}">Відкрити →</a>
+    ${A()?`<button type="button" class="adm-b del adrm" data-ad="${esc(a.id)}">Прибрати рекламу</button>`:""}</div>`).join("")
+    +(A()?`<div class="card adm"><button class="btn full" id="adAddBtn">＋ Рекламувати</button><p class="adm-note">Бачиш лише ти. Тут можна додати чужий магазин або канал.</p></div>`:"");
+  const add=document.getElementById("adAddBtn"); if(add) add.onclick=openAddAd;
+}
+document.getElementById("adlist").onclick=e=>{
+  const rm=e.target.closest("[data-ad]"); if(rm){ ask("Прибрати цю рекламу?",()=>adminCall("admin/addel",{id:rm.dataset.ad})); return; }
+  const a=e.target.closest("a[data-url]"); if(a){ e.preventDefault(); open_(a.dataset.url); } };
+let adImg="";
+function openAddAd(){
+  adImg="";
+  $("#panel").innerHTML=`<button class="close" onclick="closeSheet()">✕</button><h3>Нова реклама</h3><div class="sum">З'явиться у вкладці «Реклама» в усіх.</div>
+  <label>Назва магазину / каналу</label><input id="d_title" maxlength="50" placeholder="Наприклад: Магазин друга">
+  <label>Посилання або @нік</label><input id="d_url" placeholder="https://t.me/... або @shop" autocapitalize="off" autocorrect="off">
+  <label>Опис (необов'язково)</label><textarea id="d_desc" rows="2" maxlength="120"></textarea>
+  <label>Фото / логотип (необов'язково)</label><input id="d_file" type="file" accept="image/*"><img id="d_prev" alt="" style="display:none;width:100%;border-radius:14px;margin-top:10px;background:#000">
+  <div class="err" id="d_err"></div><button class="btn full" style="margin-top:16px" id="d_ok">Додати рекламу</button>`;
+  $("#sheet").classList.add("on");
+  $("#d_file").onchange=e=>{ const f=e.target.files[0]; if(!f) return; const im=new Image(), u=URL.createObjectURL(f);
+    im.onload=()=>{ const W=1000,H=600,c=document.createElement("canvas"); c.width=W; c.height=H; const x=c.getContext("2d"); x.fillStyle="#000"; x.fillRect(0,0,W,H);
+      const k=Math.min(W/im.width,H/im.height), w=im.width*k, h=im.height*k; x.drawImage(im,(W-w)/2,(H-h)/2,w,h);
+      adImg=c.toDataURL("image/jpeg",.85); const pv=$("#d_prev"); pv.src=adImg; pv.style.display="block"; URL.revokeObjectURL(u); }; im.src=u; };
+  $("#d_ok").onclick=async()=>{ const er=$("#d_err"), title=$("#d_title").value.trim(), url=$("#d_url").value.trim();
+    if(title.length<2||!url){ er.textContent="Вкажи назву і посилання."; er.style.display="block"; return; }
+    $("#d_ok").disabled=true; $("#d_ok").textContent="Додаю...";
+    const j=await post("admin/adadd",{title,url,desc:$("#d_desc").value.trim(),image:adImg});
+    if(j.ok){ applyState(j); closeSheet(); if(tg&&tg.HapticFeedback) tg.HapticFeedback.notificationOccurred("success"); }
+    else{ er.textContent=j.error||"Помилка"; er.style.display="block"; $("#d_ok").disabled=false; $("#d_ok").textContent="Додати рекламу"; } };
+}
+renderAds();
 </script>
 </body>
 </html>
