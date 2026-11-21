@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>HST Shop</title>
+<title>VST Shop</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root{
@@ -329,13 +329,19 @@ section.on .card,section.on .hero,section.on .prod{animation:none}
 .bgimg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,11,16,.35),rgba(12,11,16,.15) 45%,rgba(12,11,16,.45));transition:background .35s}
 :root[data-theme="light"] .bgimg::after{background:rgba(245,243,250,.9)}
 header{background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.adm-row{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap}
+.adm-b{flex:1;min-width:84px;padding:10px 6px;border-radius:12px;border:1px dashed var(--line);background:transparent;color:var(--muted);font-weight:800;font-size:12px}
+.adm-b.del{color:#ff6b6b;border-color:rgba(255,107,107,.45)}
+.adm-note{margin-top:10px;font-size:12px;color:var(--muted);text-align:center}
+.prod.adm{border-style:dashed}
+.prod.hid{opacity:.5}
 </style>
 </head>
 <body>
 <div class="bgimg" aria-hidden="true"></div>
 <header>
   <div class="top">
-    <div class="logo"><b>HST</b> SHOP</div>
+    <div class="logo"><b>VST</b> SHOP</div>
     <button class="theme" id="theme">☀</button>
   </div>
   <nav id="nav">
@@ -348,12 +354,12 @@ header{background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-
 <main>
   <section id="catalog" class="on">
     <div class="hero">
-      <div class="kicker">HST</div>
-      <h1>Мерч команди HST</h1>
-      <p>Таблички, брелки та стікерпаки. Відправляємо Новою Поштою по всій Україні.</p>
+      <div class="kicker">VST</div>
+      <h1>Мерч команди VST</h1>
+      <p>Таблички, брелки та стікерпаки Vinnitsa Stunt Team. Відправляємо Новою Поштою по всій Україні.</p>
     </div>
-    <div class="mq"><div class="mq-t"><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ STUNT TEAM ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ STUNT TEAM ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ STUNT TEAM ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ STUNT TEAM ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ STUNT TEAM ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ STUNT TEAM ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ STUNT TEAM ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ STUNT TEAM ✦ </span></div></div>
-    <div class="mq rev"><div class="mq-t"><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#HST</b> ✦ G2HST ✦ <b>#HST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span></div></div>
+    <div class="mq"><div class="mq-t"><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ VINNITSA STUNT TEAM ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ VINNITSA STUNT TEAM ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ VINNITSA STUNT TEAM ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ VINNITSA STUNT TEAM ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ VINNITSA STUNT TEAM ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ VINNITSA STUNT TEAM ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ VINNITSA STUNT TEAM ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ VINNITSA STUNT TEAM ✦ </span></div></div>
+    <div class="mq rev"><div class="mq-t"><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span><span><b>#VST</b> ✦ G2HST ✦ <b>#VST</b> ✦ ВІДПРАВКА ПО УКРАЇНІ ✦ </span></div></div>
     <h2>Каталог</h2>
     <p class="sub">Обери товар і натисни «Замовити».</p>
     <div id="list"></div>
@@ -383,7 +389,7 @@ header{background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-
     </div>
     <div class="card">
       <div class="big"><svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></div>
-      <div class="cap">YT:G2HST #HST</div>
+      <div class="cap">YT:G2HST #VST</div>
       <div class="cnt" id="ttCnt" hidden><b data-n="0">0</b> підписників</div>
       <a class="btn full" id="ttBtn" href="#">Відкрити TikTok</a>
     </div>
@@ -394,7 +400,7 @@ header{background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-
     </div>
   </section>
 </main>
-<footer class="hst">#HST</footer>
+<footer class="hst">#VST</footer>
 
 <button class="gear" id="gear" aria-label="Налаштування"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.8l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-1.8-.3 1.7 1.7 0 00-1 1.5V21a2 2 0 01-4 0v-.1a1.7 1.7 0 00-1.1-1.5 1.7 1.7 0 00-1.8.3l-.1.1a2 2 0 11-2.8-2.8l.1-.1a1.7 1.7 0 00.3-1.8 1.7 1.7 0 00-1.5-1H3a2 2 0 010-4h.1a1.7 1.7 0 001.5-1.1 1.7 1.7 0 00-.3-1.8l-.1-.1a2 2 0 112.8-2.8l.1.1a1.7 1.7 0 001.8.3H9a1.7 1.7 0 001-1.5V3a2 2 0 014 0v.1a1.7 1.7 0 001 1.5 1.7 1.7 0 001.8-.3l.1-.1a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.8V9a1.7 1.7 0 001.5 1H21a2 2 0 010 4h-.1a1.7 1.7 0 00-1.5 1z"/></svg></button>
 <div class="pop" id="pop"><div class="row"><span>Liquid Glass</span><button class="sw" id="sw" role="switch" aria-checked="true" aria-label="Liquid Glass"></button></div></div>
@@ -404,8 +410,7 @@ header{background:color-mix(in srgb,var(--bg) 72%,transparent);-webkit-backdrop-
 const CFG = {
   products: [
     {id:"plate",   name:"Табличка HST",  price:300, img:"plate.jpg?v=3",    desc:"Номерна табличка команди HST."},
-    {id:"vst",     name:"Табличка VST Vinnitsa Stunt Team", price:300, img:"vst_black.jpg?v=6", desc:"Номерна табличка VST · Vinnitsa Stunt Team. Обери колір.",
-       colors:[{id:"black",name:"Чорна",img:"vst_black.jpg?v=6",dot:"#111"},{id:"white",name:"Біла",img:"vst_white.jpg?v=5",dot:"#f4f4f4"}]},
+    {id:"vst",     name:"Табличка VST Vinnitsa Stunt Team", price:300, img:"vst_plate.jpg?v=1", desc:"Номерна табличка VST · Vinnitsa Stunt Team."},
     {id:"keychain",name:"Брелок HST",    price:100, img:"keychain.jpg?v=3", desc:"Брелок з логотипом HST."},
     {id:"stickers",name:"Стікерпак HST", out:true, price:200, img:"stickers.jpg?v=3", desc:"Набір вінілових стікерів HST."}
   ],
@@ -439,14 +444,32 @@ $("#theme").onclick=()=>{
 })();
 
 // catalog
-$("#list").innerHTML = CFG.products.map(p=>`
-  <div class="prod">${p.out?"":`<img src="${p.img}" alt="">`}
-  <div class="pb"><h3>${p.name}</h3><p>${p.desc}</p>
+const esc=t=>String(t==null?"":t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const BUILTIN=CFG.products.slice(); let isAdmin=false, OVR={}, EXTRA=[];
+function applyCatalog(){
+  const list=[];
+  BUILTIN.forEach(b=>{ const o=OVR[b.id]||{}; const p=Object.assign({},b);
+    if(o.price) p.price=o.price; if(o.out!==undefined) p.out=!!o.out; if(o.hide){ if(!isAdmin) return; p.hidden=true; }
+    list.push(p); });
+  EXTRA.forEach(x=>list.push({id:x.id,name:x.name,price:x.price,desc:x.desc,out:x.out,img:x.img,custom:true}));
+  CFG.products=list; renderCatalog();
+}
+function renderCatalog(){
+  $("#list").innerHTML = CFG.products.map(p=>`
+  <div class="prod${p.hidden?" hid":""}">${p.out&&!p.custom?"":`<img src="${esc(p.img)}" alt="">`}
+  <div class="pb"><h3>${esc(p.name)}</h3><p>${esc(p.desc)}</p>
   ${p.colors?`<div class="cols">${p.colors.map((c,i)=>`<button type="button" class="col ${i?"":"on"}" data-p="${p.id}" data-c="${c.id}"><i style="background:${c.dot}"></i>${c.name}</button>`).join("")}</div>`:""}
-  ${p.out?`<div class="row"><div class="out">Немає в наявності</div></div>`:`<div class="row"><div class="price">${p.price}<small>грн</small></div>
-  <button class="btn" data-id="${p.id}">Замовити →</button></div>`}</div></div>`).join("");
+  ${p.hidden?`<div class="row"><div class="out">Приховано від покупців</div></div>`:p.out?`<div class="row"><div class="out">Немає в наявності</div></div>`:`<div class="row"><div class="price">${p.price}<small>грн</small></div>
+  <button class="btn" data-id="${p.id}">Замовити →</button></div>`}
+  ${isAdmin?`<div class="adm-row">${p.hidden?`<button type="button" class="adm-b" data-act="unhide" data-id="${p.id}">Повернути в каталог</button>`:`<button type="button" class="adm-b" data-act="stock" data-id="${p.id}">${p.out?"Є в наявності":"Немає в наявності"}</button><button type="button" class="adm-b" data-act="price" data-id="${p.id}">Ціна</button><button type="button" class="adm-b del" data-act="del" data-id="${p.id}">Видалити</button>`}</div>`:""}</div></div>`).join("")
+  + (isAdmin?`<div class="prod adm"><div class="pb"><button class="btn full" data-act="add">＋ Додати товар</button><p class="adm-note">Бачиш лише ти. Іншим цих кнопок немає.</p></div></div>`:"");
+  if(renderCatalog.n++) $("#list").querySelectorAll(".prod").forEach(e=>e.classList.add("in"));
+}
+renderCatalog.n=0;
+renderCatalog();
 const pcol={}; CFG.products.forEach(p=>{ if(p.colors) pcol[p.id]=p.colors[0].id; });
 $("#list").onclick=e=>{
+  const ad=e.target.closest("button[data-act]"); if(ad){ adminAct(ad); return; }
   const c=e.target.closest("button.col");
   if(c){ const p=CFG.products.find(x=>x.id===c.dataset.p), col=p.colors.find(x=>x.id===c.dataset.c); pcol[p.id]=col.id;
     c.parentNode.querySelectorAll(".col").forEach(x=>x.classList.toggle("on",x===c));
@@ -508,7 +531,7 @@ function render(){
 }
 function setC(c){ keep(); const e=document.getElementById('f_np'); if(e) npVal=e.value; pcol[cur.id]=c; render(); restore(); }
 function chg(d){qty=Math.max(1,Math.min(50,qty+d));$("#q").textContent=qty;$("#tot").textContent=cur.price*qty+" грн"}
-function payNow(sum){ const u=CFG.jar+(CFG.jar.includes('?')?'&':'?')+'a='+sum+'&t='+encodeURIComponent('HST замовлення'); open_(u); }
+function payNow(sum){ const u=CFG.jar+(CFG.jar.includes('?')?'&':'?')+'a='+sum+'&t='+encodeURIComponent('VST замовлення'); open_(u); }
 function closeSheet(){$("#sheet").classList.remove("on")}
 $("#sheet").onclick=e=>{if(e.target.id==="sheet")closeSheet()};
 async function send(){
@@ -631,6 +654,53 @@ function confetti(){
   const io=new IntersectionObserver(es=>es.forEach(x=>{ if(x.isIntersecting){ x.target.classList.add('in'); io.unobserve(x.target); if(x.target.closest('#channels') && typeof showStats==='function'){ if(stats) showStats(); else setTimeout(showStats,700); } } }),{threshold:.15});
   els.forEach(e=>io.observe(e));
 })();
+
+
+// ---- admin: manage products (only ADMIN_ID, checked on the server) ----
+function post(url,body){ return fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.assign({initData:(tg&&tg.initData)||""},body))}).then(r=>r.json().catch(()=>({ok:false})).then(j=>Object.assign({status:r.status},j))); }
+function applyState(j){ EXTRA=j.items||[]; OVR=j.ov||{}; applyCatalog(); }
+fetch("products").then(r=>r.json()).then(j=>{ if((j.items&&j.items.length)||(j.ov&&Object.keys(j.ov).length)) applyState(j); }).catch(()=>{});
+post("me",{}).then(j=>{ if(j.admin){ isAdmin=true; applyCatalog(); } }).catch(()=>{});
+function ask(msg,yes){ if(tg&&tg.showConfirm) tg.showConfirm(msg,ok=>{ if(ok) yes(); }); else if(confirm(msg)) yes(); }
+async function adminCall(url,body){ const j=await post(url,body); if(j.ok) applyState(j); else{ const m=j.error||"Помилка"; if(tg&&tg.showAlert) tg.showAlert(m); else alert(m); } return j; }
+function adminAct(b){
+  const act=b.dataset.act, id=b.dataset.id, p=CFG.products.find(x=>x.id===id);
+  if(act==="add") return openAdd();
+  if(act==="stock") return adminCall("admin/set",{id,out:!p.out});
+  if(act==="unhide") return adminCall("admin/set",{id,hide:0});
+  if(act==="price") return openPrice(p);
+  if(act==="del") return ask(p.custom?"Видалити цей товар назавжди?":"Прибрати товар з каталогу? (його можна повернути)",()=>adminCall("admin/del",{id}));
+}
+function openPrice(p){
+  $("#panel").innerHTML=`<button class="close" onclick="closeSheet()">✕</button><h3>${esc(p.name)}</h3><div class="sum">Зараз: ${p.price} грн</div>
+  <label>Нова ціна, грн</label><input id="p_val" type="number" inputmode="numeric" value="${p.price}">
+  <div class="err" id="p_err"></div><button class="btn full" style="margin-top:16px" id="p_ok">Зберегти</button>`;
+  $("#sheet").classList.add("on");
+  $("#p_ok").onclick=async()=>{ const v=parseInt($("#p_val").value,10); if(!v||v<1){ $("#p_err").textContent="Вкажи ціну."; $("#p_err").style.display="block"; return; }
+    $("#p_ok").disabled=true; const j=await adminCall("admin/set",{id:p.id,price:v}); if(j.ok) closeSheet(); else $("#p_ok").disabled=false; };
+}
+let addImg="";
+function openAdd(){
+  addImg="";
+  $("#panel").innerHTML=`<button class="close" onclick="closeSheet()">✕</button><h3>Новий товар</h3><div class="sum">Додається в каталог для всіх покупців.</div>
+  <label>Назва</label><input id="a_name" maxlength="60" placeholder="Наприклад: Футболка VST">
+  <label>Ціна, грн</label><input id="a_price" type="number" inputmode="numeric" placeholder="300">
+  <label>Опис (необов'язково)</label><textarea id="a_desc" rows="2" maxlength="140"></textarea>
+  <label>Фото</label><input id="a_file" type="file" accept="image/*"><img id="a_prev" alt="" style="display:none;width:100%;border-radius:14px;margin-top:10px;background:#000">
+  <div class="err" id="a_err"></div><button class="btn full" style="margin-top:16px" id="a_ok">Додати в каталог</button>`;
+  $("#sheet").classList.add("on");
+  $("#a_file").onchange=e=>{ const f=e.target.files[0]; if(!f) return; const im=new Image(); const u=URL.createObjectURL(f);
+    im.onload=()=>{ const S=1000, c=document.createElement("canvas"); c.width=c.height=S; const x=c.getContext("2d"); x.fillStyle="#000"; x.fillRect(0,0,S,S);
+      const k=Math.min(S/im.width,S/im.height), w=im.width*k, h=im.height*k; x.drawImage(im,(S-w)/2,(S-h)/2,w,h);
+      addImg=c.toDataURL("image/jpeg",.86); const pv=$("#a_prev"); pv.src=addImg; pv.style.display="block"; URL.revokeObjectURL(u); };
+    im.src=u; };
+  $("#a_ok").onclick=async()=>{ const er=$("#a_err"); const name=$("#a_name").value.trim(), price=$("#a_price").value;
+    if(name.length<2||!price||!addImg){ er.textContent="Вкажи назву, ціну і додай фото."; er.style.display="block"; return; }
+    $("#a_ok").disabled=true; $("#a_ok").textContent="Додаю...";
+    const j=await post("admin/add",{name,price,desc:$("#a_desc").value.trim(),image:addImg});
+    if(j.ok){ applyState(j); closeSheet(); if(tg&&tg.HapticFeedback) tg.HapticFeedback.notificationOccurred("success"); }
+    else{ er.textContent=j.error||"Помилка"; er.style.display="block"; $("#a_ok").disabled=false; $("#a_ok").textContent="Додати в каталог"; } };
+}
 </script>
 </body>
 </html>
